@@ -1,0 +1,458 @@
+[
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 1,
+    "fields": {
+      "nombre": "Sarna del manzano",
+      "nombre_modelo": "Apple with Apple Scab",
+      "descripcion": "Enfermedad fúngica causada por Venturia inaequalis. Afecta hojas y frutos.",
+      "sintomas": "Manchas oliváceas o marrones aterciopeladas en hojas. Frutos con costras marrones.",
+      "tratamiento": "Variedades resistentes, recogida de hojas caídas, fungicidas preventivos en primavera.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 2,
+    "fields": {
+      "nombre": "Pudrición negra del manzano",
+      "nombre_modelo": "Apple with Black Rot",
+      "descripcion": "Enfermedad fúngica causada por Botryosphaeria obtusa. Afecta hojas, frutos y madera.",
+      "sintomas": "Manchas circulares marrones con bordes púrpuras en hojas. Frutos momificados.",
+      "tratamiento": "Poda sanitaria, eliminar frutos momificados, fungicidas a base de cobre.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 3,
+    "fields": {
+      "nombre": "Roya de la manzana",
+      "nombre_modelo": "Apple with Cedar Apple Rust",
+      "descripcion": "Enfermedad fúngica que requiere dos hospedadores: manzano y enebro.",
+      "sintomas": "Manchas amarillo-naranjas brillantes en hojas con pequeñas estructuras negras.",
+      "tratamiento": "Eliminar enebros cercanos. Fungicidas preventivos a base de mancozeb o azufre.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 4,
+    "fields": {
+      "nombre": "Manzano sano",
+      "nombre_modelo": "Apple is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles. Hojas con coloración verde uniforme.",
+      "tratamiento": "Mantener buenas prácticas de cultivo: riego adecuado y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 5,
+    "fields": {
+      "nombre": "Arándano sano",
+      "nombre_modelo": "Blueberry is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener pH ácido del suelo (4,5-5,5), riego regular y vigilancia de plagas.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 6,
+    "fields": {
+      "nombre": "Oídio del cerezo",
+      "nombre_modelo": "Cherry with Powdery Mildew",
+      "descripcion": "Enfermedad fúngica causada por Podosphaera clandestina.",
+      "sintomas": "Polvo blanco harinoso sobre hojas jóvenes y brotes. Hojas deformadas y amarillentas.",
+      "tratamiento": "Fungicidas a base de azufre, mejorar ventilación, evitar exceso de nitrógeno.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 7,
+    "fields": {
+      "nombre": "Cerezo sano",
+      "nombre_modelo": "Cherry is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 8,
+    "fields": {
+      "nombre": "Mancha gris del maíz",
+      "nombre_modelo": "Corn with Cercospora Leaf Spot",
+      "descripcion": "Enfermedad fúngica causada por Cercospora zeae-maydis.",
+      "sintomas": "Lesiones rectangulares grises o marrones paralelas a las nervaduras.",
+      "tratamiento": "Rotación de cultivos, variedades resistentes, fungicidas sistémicos.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 9,
+    "fields": {
+      "nombre": "Roya común del maíz",
+      "nombre_modelo": "Corn with Common Rust",
+      "descripcion": "Enfermedad fúngica causada por Puccinia sorghi.",
+      "sintomas": "Pústulas pardo-rojizas dispersas por ambas caras de las hojas.",
+      "tratamiento": "Variedades resistentes, fungicidas preventivos si la presión es alta.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 10,
+    "fields": {
+      "nombre": "Tizón norteño del maíz",
+      "nombre_modelo": "Corn with Northern Leaf Blight",
+      "descripcion": "Enfermedad fúngica causada por Setosphaeria turcica.",
+      "sintomas": "Lesiones elípticas grises o marrones de 2,5-15 cm en hojas.",
+      "tratamiento": "Rotación de cultivos, variedades resistentes, fungicidas triazoles.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 11,
+    "fields": {
+      "nombre": "Maíz sano",
+      "nombre_modelo": "Corn is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 12,
+    "fields": {
+      "nombre": "Pudrición negra de la uva",
+      "nombre_modelo": "Grape with Black Rot",
+      "descripcion": "Enfermedad fúngica causada por Guignardia bidwellii.",
+      "sintomas": "Manchas marrones en hojas con bordes oscuros. Frutos que se momifican.",
+      "tratamiento": "Eliminar material infectado, fungicidas preventivos desde brotación.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 13,
+    "fields": {
+      "nombre": "Esca de la vid",
+      "nombre_modelo": "Grape with Esca",
+      "descripcion": "Complejo de enfermedades fúngicas que afectan la madera de la vid.",
+      "sintomas": "Manchas cloróticas entre nervaduras. Necrosis súbita en verano.",
+      "tratamiento": "No existe tratamiento curativo. Prevención con podas sanitarias.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 14,
+    "fields": {
+      "nombre": "Mancha foliar de la vid",
+      "nombre_modelo": "Grape with Leaf Blight",
+      "descripcion": "Enfermedad fúngica causada por Pseudocercospora vitis.",
+      "sintomas": "Manchas angulares de color marrón-rojizo en hojas. Defoliación prematura.",
+      "tratamiento": "Fungicidas cúpricos, eliminar hojas caídas, mejorar ventilación.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 15,
+    "fields": {
+      "nombre": "Vid sana",
+      "nombre_modelo": "Grape is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas vitícolas y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 16,
+    "fields": {
+      "nombre": "Enverdecimiento de los cítricos (HLB)",
+      "nombre_modelo": "Orange with Citrus Greening",
+      "descripcion": "Enfermedad bacteriana sin cura conocida transmitida por psílidos.",
+      "sintomas": "Amarillamiento asimétrico de hojas, frutos pequeños y amargos.",
+      "tratamiento": "No hay cura. Control del insecto vector, eliminación de plantas infectadas.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 17,
+    "fields": {
+      "nombre": "Mancha bacteriana del melocotón",
+      "nombre_modelo": "Peach with Bacterial Spot",
+      "descripcion": "Enfermedad bacteriana causada por Xanthomonas arboricola pv. pruni.",
+      "sintomas": "Manchas acuosas en hojas que se vuelven marrones con halos amarillos.",
+      "tratamiento": "Variedades resistentes, bactericidas cúpricos en primavera.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 18,
+    "fields": {
+      "nombre": "Melocotonero sano",
+      "nombre_modelo": "Peach is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 19,
+    "fields": {
+      "nombre": "Mancha bacteriana del pimiento",
+      "nombre_modelo": "Bell Pepper with Bacterial Spot",
+      "descripcion": "Enfermedad bacteriana causada por Xanthomonas euvesicatoria.",
+      "sintomas": "Manchas acuosas en hojas que se vuelven marrones con bordes amarillos.",
+      "tratamiento": "Semillas certificadas, bactericidas cúpricos, evitar riego por aspersión.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 20,
+    "fields": {
+      "nombre": "Pimiento sano",
+      "nombre_modelo": "Bell Pepper is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 21,
+    "fields": {
+      "nombre": "Tizón temprano de la patata",
+      "nombre_modelo": "Potato with Early Blight",
+      "descripcion": "Enfermedad fúngica de la patata causada por Alternaria solani.",
+      "sintomas": "Manchas marrones con anillos concéntricos en hojas.",
+      "tratamiento": "Rotación de cultivos, eliminar restos infectados, fungicidas preventivos.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 22,
+    "fields": {
+      "nombre": "Tizón tardío de la patata",
+      "nombre_modelo": "Potato with Late Blight",
+      "descripcion": "Enfermedad muy grave causada por Phytophthora infestans.",
+      "sintomas": "Manchas oscuras grasientas en hojas, halo blanquecino en envés.",
+      "tratamiento": "Destruir plantas afectadas, fungicidas sistémicos.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 23,
+    "fields": {
+      "nombre": "Patata sana",
+      "nombre_modelo": "Potato is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 24,
+    "fields": {
+      "nombre": "Frambueso sano",
+      "nombre_modelo": "Raspberry is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 25,
+    "fields": {
+      "nombre": "Soja sana",
+      "nombre_modelo": "Soybean is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 26,
+    "fields": {
+      "nombre": "Oídio del calabacín",
+      "nombre_modelo": "Squash with Powdery Mildew",
+      "descripcion": "Enfermedad fúngica muy común en cucurbitáceas causada por Podosphaera xanthii.",
+      "sintomas": "Polvo blanco harinoso en haz y envés de hojas.",
+      "tratamiento": "Fungicidas a base de azufre, eliminar hojas muy afectadas.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 27,
+    "fields": {
+      "nombre": "Tizón foliar de la fresa",
+      "nombre_modelo": "Strawberry with Leaf Scorch",
+      "descripcion": "Enfermedad fúngica común en fresas con clima cálido y húmedo.",
+      "sintomas": "Manchas púrpuras en hojas que se vuelven necróticas.",
+      "tratamiento": "Eliminar hojas afectadas, mejorar ventilación, fungicidas a base de azufre.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 28,
+    "fields": {
+      "nombre": "Fresa sana",
+      "nombre_modelo": "Strawberry is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles.",
+      "tratamiento": "Mantener buenas prácticas de cultivo y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 29,
+    "fields": {
+      "nombre": "Mancha bacteriana del tomate",
+      "nombre_modelo": "Tomato with Bacterial Spot",
+      "descripcion": "Enfermedad bacteriana causada por Xanthomonas vesicatoria.",
+      "sintomas": "Manchas acuosas en hojas que se tornan marrones con bordes amarillos.",
+      "tratamiento": "Semillas certificadas, bactericidas cúpricos, evitar riego por aspersión.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 30,
+    "fields": {
+      "nombre": "Tizón temprano del tomate",
+      "nombre_modelo": "Tomato with Early Blight",
+      "descripcion": "Enfermedad fúngica causada por Alternaria solani.",
+      "sintomas": "Manchas marrones con anillos concéntricos en hojas viejas.",
+      "tratamiento": "Eliminar hojas afectadas, fungicidas a base de cobre, mejorar ventilación.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 31,
+    "fields": {
+      "nombre": "Tizón tardío del tomate",
+      "nombre_modelo": "Tomato with Late Blight",
+      "descripcion": "Enfermedad causada por Phytophthora infestans.",
+      "sintomas": "Manchas oscuras irregulares en hojas, tallos ennegrecidos, frutos con manchas marrones.",
+      "tratamiento": "Eliminar plantas afectadas inmediatamente. Fungicidas preventivos. Evitar humedad en el follaje.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 32,
+    "fields": {
+      "nombre": "Moho foliar del tomate",
+      "nombre_modelo": "Tomato with Leaf Mold",
+      "descripcion": "Enfermedad fúngica causada por Passalora fulva. Favorecida por alta humedad.",
+      "sintomas": "Manchas amarillas en el haz y moho oliváceo en el envés.",
+      "tratamiento": "Mejorar ventilación, reducir humedad, fungicidas preventivos.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 33,
+    "fields": {
+      "nombre": "Mancha foliar del tomate",
+      "nombre_modelo": "Tomato with Septoria Leaf Spot",
+      "descripcion": "Causada por el hongo Septoria lycopersici.",
+      "sintomas": "Pequeñas manchas circulares con centro gris y bordes oscuros.",
+      "tratamiento": "Retirar hojas afectadas, mejorar circulación de aire, fungicidas.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 34,
+    "fields": {
+      "nombre": "Araña roja del tomate",
+      "nombre_modelo": "Tomato with Spider Mites",
+      "descripcion": "Plaga causada por el ácaro Tetranychus urticae.",
+      "sintomas": "Puntitos amarillos en hojas, telas de araña finas, bronceado y defoliación.",
+      "tratamiento": "Aumentar humedad ambiental, acaricidas específicos.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 35,
+    "fields": {
+      "nombre": "Mancha diana del tomate",
+      "nombre_modelo": "Tomato with Target Spot",
+      "descripcion": "Enfermedad fúngica causada por Corynespora cassiicola.",
+      "sintomas": "Manchas circulares marrones con anillos concéntricos.",
+      "tratamiento": "Fungicidas a base de cobre, mejorar ventilación.",
+      "gravedad": "moderada"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 36,
+    "fields": {
+      "nombre": "Virus del enrollamiento amarillo del tomate",
+      "nombre_modelo": "Tomato with Tomato Yellow Leaf Curl Virus",
+      "descripcion": "Enfermedad viral transmitida por la mosca blanca Bemisia tabaci. Sin cura.",
+      "sintomas": "Hojas enrolladas hacia arriba y amarillentas, aborto floral.",
+      "tratamiento": "Control de mosca blanca, variedades resistentes, mallas antiinsectos.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 37,
+    "fields": {
+      "nombre": "Virus del mosaico del tomate",
+      "nombre_modelo": "Tomato with Tomato Mosaic Virus",
+      "descripcion": "Enfermedad viral muy persistente que puede sobrevivir en semillas y suelo.",
+      "sintomas": "Mosaico verde claro/oscuro en hojas, deformación foliar.",
+      "tratamiento": "Semillas certificadas, desinfección de herramientas, eliminar plantas infectadas.",
+      "gravedad": "grave"
+    }
+  },
+  {
+    "model": "huertosmart.enfermedad",
+    "pk": 38,
+    "fields": {
+      "nombre": "Tomate sano",
+      "nombre_modelo": "Tomato is Healthy",
+      "descripcion": "La planta no presenta síntomas de enfermedad.",
+      "sintomas": "Sin síntomas visibles. Hoja con coloración verde uniforme.",
+      "tratamiento": "Mantener buenas prácticas de cultivo: riego adecuado y vigilancia regular.",
+      "gravedad": "leve"
+    }
+  }
+]

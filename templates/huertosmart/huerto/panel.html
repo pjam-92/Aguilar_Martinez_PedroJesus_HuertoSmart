@@ -1,0 +1,58 @@
+{% extends 'huertosmart/base.html' %}
+
+{% block title %}Mi Huerto · HuertoSmart{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+    <div class="flex justify-between items-start mb-8 flex-wrap gap-4">
+        <div>
+            <h1 class="text-4xl font-bold mb-2" style="color:white; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">🏡 Mi Huerto</h1>
+            <p style="color:#e0e0e0; text-shadow: 0 1px 6px rgba(0,0,0,0.9);">Gestiona tus huertos y el seguimiento de tus cultivos.</p>
+        </div>
+        <a href="{% url 'huertosmart:crear_huerto' %}"
+           class="bg-verde-medio hover:bg-verde-oscuro text-white font-semibold px-6 py-3 rounded-lg transition">
+            + Nuevo huerto
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for huerto in huertos %}
+        <a href="{% url 'huertosmart:detalle_huerto' huerto.slug %}"
+           class="bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden border-2 border-transparent hover:border-verde-claro group">
+
+            <div class="h-32 bg-gradient-to-br from-verde-suave to-tierra-claro flex items-center justify-center">
+                <span class="text-5xl group-hover:scale-110 transition">
+                    {% if huerto.ubicacion == 'balcon' %}🪴
+                    {% elif huerto.ubicacion == 'terraza' %}🌿
+                    {% elif huerto.ubicacion == 'jardin' %}🌳
+                    {% elif huerto.ubicacion == 'parcela' %}🌾
+                    {% else %}🏠{% endif %}
+                </span>
+            </div>
+
+            <div class="p-5">
+                <h3 class="text-xl font-bold text-verde-oscuro mb-1">{{ huerto.nombre }}</h3>
+                <p class="text-sm text-gray-500 mb-4">{{ huerto.get_ubicacion_display }}
+                    {% if huerto.municipio %}· {{ huerto.municipio }}{% endif %}
+                </p>
+
+                <div class="flex flex-wrap gap-2 text-xs">
+                    {% with total=huerto.siembras.count %}
+                    <span class="bg-verde-suave text-verde-oscuro px-2 py-1 rounded">
+                        🌱 {{ total }} siembra{{ total|pluralize }}
+                    </span>
+                    {% endwith %}
+                    {% if huerto.superficie_m2 %}
+                    <span class="bg-tierra-claro/30 text-tierra-oscuro px-2 py-1 rounded">
+                        📐 {{ huerto.superficie_m2 }} m²
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

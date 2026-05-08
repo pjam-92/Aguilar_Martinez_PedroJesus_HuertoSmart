@@ -1,0 +1,126 @@
+{% extends 'huertosmart/base.html' %}
+
+{% block title %}{{ cultivo.nombre }} · HuertoSmart{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+    <a href="{% url 'huertosmart:lista_cultivos' %}" class="inline-flex items-center gap-2 mb-6 transition font-semibold" style="color:white; text-shadow: 0 1px 6px rgba(0,0,0,0.9);">
+        ← Biblioteca de cultivos
+    </a>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+
+        <div class="h-56 overflow-hidden relative bg-gradient-to-br from-verde-suave to-verde-claro">
+            {% if imagen_url %}
+            <img src="{{ imagen_url }}" alt="{{ cultivo.nombre }}"
+                 class="h-full w-full object-cover"
+                 onerror="this.style.display='none'">
+            {% else %}
+            <div class="h-full w-full flex items-center justify-center text-8xl">🌱</div>
+            {% endif %}
+            <span class="absolute top-4 right-4 bg-white text-verde-oscuro text-sm font-bold px-3 py-1 rounded-full shadow">
+                {{ cultivo.get_dificultad_display }}
+            </span>
+        </div>
+
+        <div class="p-8">
+            <h1 class="text-3xl font-bold text-verde-oscuro mb-1">{{ cultivo.nombre }}</h1>
+            {% if cultivo.nombre_cientifico %}
+            <p class="text-sm italic text-gray-500 mb-4">{{ cultivo.nombre_cientifico }}</p>
+            {% endif %}
+
+            {% if cultivo.descripcion %}
+            <p class="text-gray-700 mb-6">{{ cultivo.descripcion }}</p>
+            {% endif %}
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-tierra-claro/20 rounded-lg p-3 text-center">
+                    <p class="text-2xl mb-1">☀</p>
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Exposición</p>
+                    <p class="text-sm font-bold text-tierra-oscuro mt-1">{{ cultivo.get_exposicion_display }}</p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                    <p class="text-2xl mb-1">💧</p>
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Riego</p>
+                    <p class="text-sm font-bold text-blue-800 mt-1">{{ cultivo.get_riego_display }}</p>
+                </div>
+                {% if cultivo.dias_cosecha %}
+                <div class="bg-verde-suave rounded-lg p-3 text-center">
+                    <p class="text-2xl mb-1">⏱</p>
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Días a cosecha</p>
+                    <p class="text-sm font-bold text-verde-oscuro mt-1">{{ cultivo.dias_cosecha }} días</p>
+                </div>
+                {% endif %}
+                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                    <p class="text-2xl mb-1">🌡</p>
+                    <p class="text-xs text-gray-500 uppercase font-semibold">Dificultad</p>
+                    <p class="text-sm font-bold text-gray-700 mt-1">{{ cultivo.get_dificultad_display }}</p>
+                </div>
+            </div>
+
+            {% if meses_siembra %}
+            <div class="mb-4">
+                <p class="text-sm font-semibold text-verde-oscuro mb-2">📅 Meses de siembra</p>
+                <div class="flex flex-wrap gap-2">
+                    {% for mes in meses_siembra %}
+                    <span class="bg-verde-suave text-verde-oscuro text-xs font-semibold px-3 py-1 rounded-full">{{ mes }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if meses_cosecha %}
+            <div class="mb-6">
+                <p class="text-sm font-semibold text-verde-oscuro mb-2">🌾 Meses de cosecha</p>
+                <div class="flex flex-wrap gap-2">
+                    {% for mes in meses_cosecha %}
+                    <span class="bg-tierra-claro/40 text-tierra-oscuro text-xs font-semibold px-3 py-1 rounded-full">{{ mes }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <div class="border-t pt-6">
+                <a href="{% url 'huertosmart:mi_huerto' %}"
+                   class="inline-flex items-center gap-2 bg-verde-medio hover:bg-verde-oscuro text-white font-semibold px-6 py-3 rounded-lg transition">
+                    🌱 Ir a mi huerto para sembrar
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if enfermedades %}
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-xl font-bold text-verde-oscuro mb-4">⚠ Enfermedades frecuentes</h2>
+        <div class="space-y-4">
+            {% for enfermedad in enfermedades %}
+            <div class="border-l-4 pl-4
+                {% if enfermedad.gravedad == 'grave' %}border-red-500 bg-red-50
+                {% elif enfermedad.gravedad == 'moderada' %}border-yellow-400 bg-yellow-50
+                {% else %}border-verde-claro bg-verde-suave/30{% endif %} rounded-r p-3">
+                <div class="flex justify-between items-start flex-wrap gap-2">
+                    <p class="font-bold text-gray-800">{{ enfermedad.nombre }}</p>
+                    <span class="text-xs font-semibold px-2 py-1 rounded-full
+                        {% if enfermedad.gravedad == 'grave' %}bg-red-100 text-red-700
+                        {% elif enfermedad.gravedad == 'moderada' %}bg-yellow-100 text-yellow-700
+                        {% else %}bg-green-100 text-green-700{% endif %}">
+                        {{ enfermedad.get_gravedad_display }}
+                    </span>
+                </div>
+                {% if enfermedad.descripcion %}
+                <p class="text-sm text-gray-600 mt-1">{{ enfermedad.descripcion }}</p>
+                {% endif %}
+                {% if enfermedad.tratamiento %}
+                <p class="text-sm text-verde-oscuro mt-2 font-semibold">💊 {{ enfermedad.tratamiento }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

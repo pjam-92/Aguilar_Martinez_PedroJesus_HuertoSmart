@@ -1,0 +1,81 @@
+{% extends 'huertosmart/base.html' %}
+
+{% block title %}Historial de diagnósticos · HuertoSmart{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+    <div class="flex justify-between items-start mb-8 flex-wrap gap-4">
+        <div>
+            <h1 class="text-4xl font-bold mb-2" style="color:white; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">📋 Historial de diagnósticos</h1>
+            <p style="color:#e0e0e0; text-shadow: 0 1px 6px rgba(0,0,0,0.9);">Todos los análisis realizados con el sistema de IA.</p>
+        </div>
+        <a href="{% url 'huertosmart:diagnostico_nuevo' %}"
+           class="bg-verde-medio hover:bg-verde-oscuro text-white font-semibold px-6 py-3 rounded-lg transition">
+            + Nuevo diagnóstico
+        </a>
+    </div>
+
+    {% if diagnosticos %}
+    <div class="space-y-4">
+        {% for d in diagnosticos %}
+        <a href="{% url 'huertosmart:diagnostico_detalle' d.id %}"
+           class="block bg-white rounded-lg shadow hover:shadow-lg transition p-5">
+            <div class="flex justify-between items-center flex-wrap gap-3">
+                <div class="flex items-center gap-4">
+                    {% if d.imagen %}
+                        <img src="{{ d.imagen.url }}" alt="Imagen"
+                             class="w-16 h-16 object-cover rounded-lg border">
+                    {% else %}
+                        <div class="w-16 h-16 bg-verde-suave rounded-lg flex items-center justify-center text-2xl">🌿</div>
+                    {% endif %}
+                    <div>
+                        <p class="font-bold text-verde-oscuro text-lg">
+                            {% if d.enfermedad_detectada %}
+                                {{ d.enfermedad_detectada.nombre }}
+                            {% else %}
+                                Resultado no reconocido
+                            {% endif %}
+                        </p>
+                        <p class="text-sm text-gray-500">{{ d.fecha|date:"d/m/Y H:i" }}</p>
+                        {% if d.siembra %}
+                            <p class="text-xs text-verde-medio">🌱 {{ d.siembra.cultivo.nombre }} · {{ d.siembra.huerto.nombre }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-2xl font-bold
+                        {% if d.confianza >= 80 %}text-verde-oscuro
+                        {% elif d.confianza >= 50 %}text-yellow-600
+                        {% else %}text-red-500{% endif %}">
+                        {{ d.confianza }}%
+                    </span>
+                    <p class="text-xs text-gray-400">confianza</p>
+                    {% if d.enfermedad_detectada %}
+                    <span class="text-xs font-semibold px-2 py-1 rounded-full
+                        {% if d.enfermedad_detectada.gravedad == 'grave' %}bg-red-100 text-red-700
+                        {% elif d.enfermedad_detectada.gravedad == 'moderada' %}bg-yellow-100 text-yellow-700
+                        {% else %}bg-green-100 text-green-700{% endif %}">
+                        {{ d.enfermedad_detectada.get_gravedad_display }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="bg-white rounded-lg shadow p-12 text-center">
+        <p class="text-5xl mb-4">🔬</p>
+        <h3 class="text-xl font-bold text-verde-oscuro mb-2">Todavía no has hecho ningún diagnóstico</h3>
+        <p class="text-gray-600 mb-4">Sube una foto de una hoja y nuestro sistema analizará si tiene alguna enfermedad.</p>
+        <a href="{% url 'huertosmart:diagnostico_nuevo' %}"
+           class="inline-block bg-verde-medio text-white px-6 py-2 rounded hover:bg-verde-oscuro transition">
+            Hacer mi primer diagnóstico
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

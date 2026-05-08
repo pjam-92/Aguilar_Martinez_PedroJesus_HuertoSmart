@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HuertoSmart{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'verde-oscuro': '#1B4332',
+                        'verde-medio': '#2D6A4F',
+                        'verde-claro': '#52B788',
+                        'verde-suave': '#B7E4C7',
+                        'tierra-oscuro': '#5C4033',
+                        'tierra-medio': '#8B6F47',
+                        'tierra-claro': '#D4A574',
+                        'crema': '#FAF3E0',
+                    },
+                    fontFamily: {
+                        'sans': ['system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .carrusel-slide {
+            position: fixed;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            z-index: -1;
+        }
+        .carrusel-slide.active { opacity: 1; }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <div class="carrusel-slide" style="background-image: url('{% static 'img/hero1.jpg' %}')"></div>
+    <div class="carrusel-slide" style="background-image: url('{% static 'img/hero2.jpg' %}')"></div>
+    <div class="carrusel-slide" style="background-image: url('{% static 'img/hero3.jpg' %}')"></div>
+    <div class="carrusel-slide" style="background-image: url('{% static 'img/hero4.jpg' %}')"></div>
+    <div class="carrusel-slide active" style="background-image: url('{% static 'img/hero5.jpg' %}')"></div>
+
+    <nav class="bg-verde-oscuro text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="{% url 'huertosmart:home' %}" class="text-2xl font-bold flex items-center gap-2">
+                🌱 <span>HuertoSmart</span>
+            </a>
+            <div class="hidden md:flex gap-6 items-center">
+                <a href="{% url 'huertosmart:lista_cultivos' %}" class="hover:text-verde-suave transition">Cultivos</a>
+                <a href="{% url 'huertosmart:diagnostico_nuevo' %}" class="hover:text-verde-suave transition">Diagnóstico IA</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'huertosmart:mi_huerto' %}" class="hover:text-verde-suave transition">Mi Huerto</a>
+                    <span class="text-verde-suave">|</span>
+                    <div class="relative" id="menu-usuario">
+                        <button onclick="toggleMenuUsuario()"
+                                class="flex items-center gap-1 text-sm hover:text-verde-suave transition focus:outline-none">
+                            <span>{{ user.username }}</span>
+                            <svg class="w-3 h-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <div id="dropdown-usuario"
+                             class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">
+                            <a href="{% url 'account_email' %}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                ✉ Cambiar correo
+                            </a>
+                            <a href="{% url 'account_change_password' %}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                🔑 Cambiar contraseña
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="{% url 'account_logout' %}"
+                               class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-semibold">
+                                → Cerrar sesión
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="bg-verde-medio hover:bg-verde-claro px-4 py-2 rounded transition">Entrar</a>
+                    <a href="{% url 'account_signup' %}" class="bg-tierra-medio hover:bg-tierra-oscuro px-4 py-2 rounded transition">Registro</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mx-auto px-4 mt-4">
+        {% for message in messages %}
+        <div class="bg-verde-suave border-l-4 border-verde-medio text-verde-oscuro p-3 rounded mb-2">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-verde-oscuro text-verde-suave py-3">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>HuertoSmart · Proyecto Fin de Curso CE-IABD · MEDAC/Davante 2026 · Pedro Jesús Aguilar Martínez</p>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.carrusel-slide');
+        let actual = 0;
+        setInterval(() => {
+            slides[actual].classList.remove('active');
+            actual = (actual + 1) % slides.length;
+            slides[actual].classList.add('active');
+        }, 30000);
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+
+    <script>
+        function toggleMenuUsuario() {
+            const dropdown = document.getElementById('dropdown-usuario');
+            dropdown.classList.toggle('hidden');
+        }
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('menu-usuario');
+            if (menu && !menu.contains(e.target)) {
+                document.getElementById('dropdown-usuario').classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>

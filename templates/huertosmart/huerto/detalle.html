@@ -1,0 +1,189 @@
+{% extends 'huertosmart/base.html' %}
+
+{% block title %}{{ huerto.nombre }} · HuertoSmart{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+
+    <a href="{% url 'huertosmart:mi_huerto' %}" style="color:white; text-shadow: 0 1px 6px rgba(0,0,0,0.8);" class="inline-flex items-center gap-2 hover:text-verde-suave mb-6 transition">
+    ← Mis huertos
+    </a>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-verde-oscuro to-verde-medio p-6 flex justify-between items-start flex-wrap gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-white">{{ huerto.nombre }}</h1>
+                <p class="text-verde-suave mt-1">
+                    {{ huerto.get_ubicacion_display }}
+                    {% if huerto.municipio %} · {{ huerto.municipio }}{% endif %}
+                    {% if huerto.superficie_m2 %} · {{ huerto.superficie_m2 }} m²{% endif %}
+                </p>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                <a href="{% url 'huertosmart:nueva_siembra' huerto.slug %}"
+                   class="bg-white text-verde-oscuro hover:bg-verde-suave font-semibold px-5 py-2 rounded-lg transition">
+                    + Nueva siembra
+                </a>
+                <a href="{% url 'huertosmart:eliminar_huerto' huerto.slug %}"
+                   class="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded-lg transition">
+                    🗑 Eliminar
+                </a>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="bg-verde-suave rounded p-3">
+                    <p class="text-2xl font-bold text-verde-oscuro">{{ huerto.siembras.count }}</p>
+                    <p class="text-xs text-verde-oscuro">Siembras totales</p>
+                </div>
+                <div class="bg-tierra-claro/30 rounded p-3">
+                    <p class="text-2xl font-bold text-tierra-oscuro">{{ siembras.count }}</p>
+                    <p class="text-xs text-tierra-oscuro">Filtradas</p>
+                </div>
+                {% if huerto.codigo_postal %}
+                <div class="bg-blue-50 rounded p-3">
+                    <p class="text-lg font-bold text-blue-800">{{ huerto.codigo_postal }}</p>
+                    <p class="text-xs text-blue-800">Código postal</p>
+                </div>
+                {% endif %}
+                <div class="bg-crema rounded p-3">
+                    <p class="text-sm font-bold text-gray-700">{{ huerto.fecha_creacion|date:"d M Y" }}</p>
+                    <p class="text-xs text-gray-600">Creado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if alertas %}
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-verde-oscuro mb-3">⚠ Alertas climáticas</h2>
+        <div class="space-y-2">
+            {% for alerta in alertas %}
+            <div class="flex items-start gap-3 p-4 rounded-lg border-l-4
+                {% if alerta.nivel == 'danger' %}bg-red-50 border-red-500{% else %}bg-yellow-50 border-yellow-400{% endif %}">
+                <span class="text-2xl">{{ alerta.icono }}</span>
+                <div>
+                    <p class="font-semibold {% if alerta.nivel == 'danger' %}text-red-800{% else %}text-yellow-800{% endif %}">
+                        {{ alerta.mensaje }}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">{{ alerta.fecha }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if prediccion %}
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-verde-oscuro mb-3">🌤 Predicción 7 días</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            {% for dia in prediccion %}
+            <div class="bg-white rounded-lg shadow p-3 text-center">
+                <p class="text-xs font-semibold text-gray-500 mb-2">{{ dia.fecha|slice:"5:" }}</p>
+                <p class="text-lg mb-1">
+                    {% if dia.lluvia and dia.lluvia > 10 %}🌧
+                    {% elif dia.lluvia and dia.lluvia > 0 %}🌦
+                    {% elif dia.temp_max and dia.temp_max > 30 %}☀
+                    {% elif dia.viento and dia.viento > 40 %}💨
+                    {% else %}⛅
+                    {% endif %}
+                </p>
+                {% if dia.temp_max is not None %}
+                <p class="text-sm font-bold text-red-600">{{ dia.temp_max }}°</p>
+                {% endif %}
+                {% if dia.temp_min is not None %}
+                <p class="text-xs text-blue-600">{{ dia.temp_min }}°</p>
+                {% endif %}
+                {% if dia.lluvia %}
+                <p class="text-xs text-blue-400 mt-1">{{ dia.lluvia }}mm</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Datos: AEMET OpenData · Aproximación por provincia.</p>
+    </div>
+    {% elif huerto.codigo_postal %}
+    <div class="mb-8 bg-gray-50 rounded-lg p-4 text-center text-gray-500 text-sm">
+        <p>No se ha podido obtener la predicción meteorológica en este momento.</p>
+    </div>
+    {% endif %}
+
+    <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
+        <h2 class="text-2xl font-bold text-verde-oscuro">Siembras</h2>
+        <div class="flex gap-2 flex-wrap">
+            <a href="{% url 'huertosmart:detalle_huerto' huerto.slug %}"
+               class="px-3 py-1 rounded text-sm font-semibold transition
+                      {% if not estado_filtro %}bg-verde-medio text-white{% else %}bg-white text-gray-600 hover:bg-gray-100 border{% endif %}">
+                Todas
+            </a>
+            {% for valor, etiqueta in estados %}
+            {% if valor %}
+            <a href="?estado={{ valor }}"
+               class="px-3 py-1 rounded text-sm font-semibold transition
+                      {% if estado_filtro == valor %}bg-verde-medio text-white{% else %}bg-white text-gray-600 hover:bg-gray-100 border{% endif %}">
+                {{ etiqueta }}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if siembras %}
+    <div class="space-y-3">
+        {% for siembra in siembras %}
+        <div class="bg-white rounded-lg shadow p-5 flex justify-between items-center flex-wrap gap-3">
+            <div>
+                <p class="text-lg font-bold text-verde-oscuro">{{ siembra.cultivo.nombre }}</p>
+                <p class="text-sm text-gray-500">
+                    Sembrado el {{ siembra.fecha_siembra|date:"d/m/Y" }}
+                    · {{ siembra.cantidad }} planta{{ siembra.cantidad|pluralize }}
+                </p>
+                {% if siembra.notas %}
+                <p class="text-xs text-gray-400 mt-1 italic">{{ siembra.notas|truncatechars:80 }}</p>
+                {% endif %}
+            </div>
+            <div class="flex flex-col items-end gap-2">
+                <span class="text-xs font-semibold px-3 py-1 rounded-full
+                    {% if siembra.estado == 'planificada' %}bg-gray-200 text-gray-700
+                    {% elif siembra.estado == 'sembrada' %}bg-blue-100 text-blue-800
+                    {% elif siembra.estado == 'crecimiento' %}bg-verde-suave text-verde-oscuro
+                    {% elif siembra.estado == 'cosechada' %}bg-yellow-100 text-yellow-800
+                    {% else %}bg-red-100 text-red-800{% endif %}">
+                    {{ siembra.get_estado_display }}
+                </span>
+                {% if siembra.fecha_cosecha_estimada %}
+                <p class="text-xs text-gray-400">Cosecha est.: {{ siembra.fecha_cosecha_estimada|date:"d/m/Y" }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-6">
+        <a href="{% url 'huertosmart:exportar_excel' %}?huerto={{ huerto.slug }}"
+           class="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-3 rounded-lg transition">
+            📊 Exportar a Excel
+        </a>
+    </div>
+
+    {% else %}
+    <div class="bg-white rounded-lg shadow p-12 text-center">
+        <p class="text-5xl mb-4">🌱</p>
+        <h3 class="text-xl font-bold text-verde-oscuro mb-2">
+            {% if estado_filtro %}No hay siembras en este estado{% else %}Todavía no hay siembras{% endif %}
+        </h3>
+        <p class="text-gray-600 mb-4">
+            {% if estado_filtro %}Prueba a ver todas las siembras.
+            {% else %}Registra tu primera siembra para empezar el seguimiento.{% endif %}
+        </p>
+        <a href="{% url 'huertosmart:nueva_siembra' huerto.slug %}"
+           class="inline-block bg-verde-medio text-white px-6 py-2 rounded hover:bg-verde-oscuro transition">
+            + Nueva siembra
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

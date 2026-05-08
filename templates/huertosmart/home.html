@@ -1,0 +1,65 @@
+{% extends 'huertosmart/base.html' %}
+
+{% block title %}HuertoSmart - Tu huerto, más inteligente{% endblock %}
+
+{% block content %}
+
+<section class="text-center py-20 mb-16">
+    <h1 class="text-5xl font-bold mb-6 drop-shadow-lg" style="color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.7);">
+        Cultiva mejor con <span style="color: #B7E4C7;">HuertoSmart</span>
+    </h1>
+    <p class="text-xl max-w-2xl mx-auto mb-10 drop-shadow" style="color: #f0f0f0; text-shadow: 0 1px 6px rgba(0,0,0,0.8);">
+        Inteligencia artificial al servicio de tu huerto doméstico. Diagnostica enfermedades de tus plantas, descubre qué cultivar y lleva el control de tus cosechas.
+    </p>
+    <div class="flex gap-6 justify-center flex-wrap">
+        <a href="{% url 'huertosmart:diagnostico_nuevo' %}"
+           class="bg-verde-medio hover:bg-verde-oscuro text-white px-10 py-4 rounded-lg text-lg font-semibold transition shadow-lg">
+            Diagnosticar planta
+        </a>
+        <a href="{% url 'huertosmart:lista_cultivos' %}"
+           class="bg-tierra-medio hover:bg-tierra-oscuro text-white px-10 py-4 rounded-lg text-lg font-semibold transition shadow-lg">
+            Ver cultivos
+        </a>
+    </div>
+</section>
+
+<section class="max-w-5xl mx-auto grid md:grid-cols-3 gap-10 mb-16">
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-verde-medio hover:shadow-xl transition">
+        <div class="text-4xl mb-3">🔬</div>
+        <h2 class="text-xl font-bold text-verde-oscuro mb-2">Diagnóstico IA</h2>
+        <p class="text-gray-600">
+            Sube una foto de la hoja de tu planta y nuestro sistema de visión por computador detectará posibles enfermedades con recomendaciones de tratamiento.
+        </p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-tierra-medio hover:shadow-xl transition">
+        <div class="text-4xl mb-3">🌿</div>
+        <h2 class="text-xl font-bold text-verde-oscuro mb-2">Biblioteca de cultivos</h2>
+        <p class="text-gray-600">
+            Explora más de 20 cultivos con sus fichas técnicas completas: cuándo sembrar, riego necesario, exposición solar, dificultad y más.
+        </p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-verde-claro hover:shadow-xl transition">
+        <div class="text-4xl mb-3">🏡</div>
+        <h2 class="text-xl font-bold text-verde-oscuro mb-2">Tu huerto digital</h2>
+        <p class="text-gray-600">
+            Gestiona tus siembras, recibe alertas climáticas de AEMET y exporta tu historial de cosechas a Excel para un seguimiento completo.
+        </p>
+    </div>
+
+</section>
+
+{% if not user.is_authenticated %}
+<section class="max-w-2xl mx-auto bg-verde-oscuro/90 text-white rounded-xl p-10 text-center shadow-lg mb-8">
+    <h2 class="text-2xl font-bold mb-3">¿Listo para empezar?</h2>
+    <p class="mb-6 text-verde-suave">Crea tu cuenta gratuita y empieza a gestionar tu huerto con la ayuda de la IA.</p>
+    <a href="{% url 'account_signup' %}"
+       class="bg-tierra-claro hover:bg-tierra-medio text-verde-oscuro hover:text-white px-8 py-3 rounded-lg font-bold transition inline-block">
+        Crear cuenta
+    </a>
+</section>
+{% endif %}
+
+{% endblock %}

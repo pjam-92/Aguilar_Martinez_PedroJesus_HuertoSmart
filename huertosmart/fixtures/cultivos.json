@@ -1,0 +1,322 @@
+[
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 1,
+    "fields": {
+      "nombre": "Tomate",
+      "nombre_cientifico": "Solanum lycopersicum",
+      "descripcion": "Hortaliza de fruto, una de las más cultivadas en el huerto doméstico español. Necesita calor y sol abundante. Requiere tutorado.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "alto",
+      "meses_siembra": "marzo,abril,mayo",
+      "meses_cosecha": "julio,agosto,septiembre,octubre",
+      "dias_germinacion": 8,
+      "dias_cosecha": 90
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 2,
+    "fields": {
+      "nombre": "Lechuga",
+      "nombre_cientifico": "Lactuca sativa",
+      "descripcion": "Hortaliza de hoja de cultivo rápido. Tolera temperaturas frescas y se cultiva durante casi todo el año en climas templados.",
+      "dificultad": "facil",
+      "exposicion": "semisombra",
+      "riego": "medio",
+      "meses_siembra": "febrero,marzo,abril,septiembre,octubre",
+      "meses_cosecha": "mayo,junio,noviembre,diciembre",
+      "dias_germinacion": 6,
+      "dias_cosecha": 60
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 3,
+    "fields": {
+      "nombre": "Pimiento",
+      "nombre_cientifico": "Capsicum annuum",
+      "descripcion": "Hortaliza de fruto que requiere temperaturas cálidas. Existen variedades dulces (pimiento italiano, california) y picantes.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "marzo,abril",
+      "meses_cosecha": "julio,agosto,septiembre,octubre",
+      "dias_germinacion": 12,
+      "dias_cosecha": 100
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 4,
+    "fields": {
+      "nombre": "Calabacín",
+      "nombre_cientifico": "Cucurbita pepo",
+      "descripcion": "Cucurbitácea de crecimiento rápido y producción abundante. Ideal para principiantes por su facilidad y vigor.",
+      "dificultad": "facil",
+      "exposicion": "sol",
+      "riego": "alto",
+      "meses_siembra": "abril,mayo,junio",
+      "meses_cosecha": "julio,agosto,septiembre",
+      "dias_germinacion": 7,
+      "dias_cosecha": 60
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 5,
+    "fields": {
+      "nombre": "Patata",
+      "nombre_cientifico": "Solanum tuberosum",
+      "descripcion": "Tubérculo de cultivo extendido en España. Necesita suelo profundo y aporcado durante el crecimiento.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "febrero,marzo,abril",
+      "meses_cosecha": "junio,julio,agosto",
+      "dias_germinacion": 15,
+      "dias_cosecha": 120
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 6,
+    "fields": {
+      "nombre": "Zanahoria",
+      "nombre_cientifico": "Daucus carota",
+      "descripcion": "Raíz comestible. Necesita suelo suelto y profundo, sin piedras, para que se desarrolle recta.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "marzo,abril,mayo,agosto,septiembre",
+      "meses_cosecha": "junio,julio,octubre,noviembre",
+      "dias_germinacion": 14,
+      "dias_cosecha": 90
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 7,
+    "fields": {
+      "nombre": "Ajo",
+      "nombre_cientifico": "Allium sativum",
+      "descripcion": "Bulbo de la familia de las liliáceas. Se planta en otoño y se recolecta a inicios de verano.",
+      "dificultad": "facil",
+      "exposicion": "sol",
+      "riego": "bajo",
+      "meses_siembra": "octubre,noviembre,diciembre",
+      "meses_cosecha": "junio,julio",
+      "dias_germinacion": 10,
+      "dias_cosecha": 200
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 8,
+    "fields": {
+      "nombre": "Cebolla",
+      "nombre_cientifico": "Allium cepa",
+      "descripcion": "Bulbo muy utilizado en gastronomía. Variedades de día corto, medio y largo según la duración del día.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "septiembre,octubre,enero,febrero",
+      "meses_cosecha": "junio,julio,agosto",
+      "dias_germinacion": 12,
+      "dias_cosecha": 150
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 9,
+    "fields": {
+      "nombre": "Espinaca",
+      "nombre_cientifico": "Spinacia oleracea",
+      "descripcion": "Hortaliza de hoja resistente al frío. Buena opción para los meses fríos del año en España.",
+      "dificultad": "facil",
+      "exposicion": "semisombra",
+      "riego": "medio",
+      "meses_siembra": "septiembre,octubre,noviembre,febrero",
+      "meses_cosecha": "noviembre,diciembre,enero,abril",
+      "dias_germinacion": 8,
+      "dias_cosecha": 50
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 10,
+    "fields": {
+      "nombre": "Acelga",
+      "nombre_cientifico": "Beta vulgaris var. cicla",
+      "descripcion": "Hortaliza de hoja muy productiva. Las hojas se pueden ir cortando progresivamente sin arrancar la planta.",
+      "dificultad": "facil",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "marzo,abril,septiembre,octubre",
+      "meses_cosecha": "junio,julio,noviembre,diciembre",
+      "dias_germinacion": 10,
+      "dias_cosecha": 70
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 11,
+    "fields": {
+      "nombre": "Judía verde",
+      "nombre_cientifico": "Phaseolus vulgaris",
+      "descripcion": "Leguminosa que aporta nitrógeno al suelo. Existen variedades enanas y de enrame.",
+      "dificultad": "facil",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "abril,mayo,junio,julio",
+      "meses_cosecha": "julio,agosto,septiembre,octubre",
+      "dias_germinacion": 7,
+      "dias_cosecha": 65
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 12,
+    "fields": {
+      "nombre": "Pepino",
+      "nombre_cientifico": "Cucumis sativus",
+      "descripcion": "Cucurbitácea trepadora. Necesita tutorado y abundante riego en verano.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "alto",
+      "meses_siembra": "abril,mayo",
+      "meses_cosecha": "julio,agosto,septiembre",
+      "dias_germinacion": 8,
+      "dias_cosecha": 75
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 13,
+    "fields": {
+      "nombre": "Berenjena",
+      "nombre_cientifico": "Solanum melongena",
+      "descripcion": "Solanácea de fruto. Necesita mucho calor para producir, ideal para zonas mediterráneas.",
+      "dificultad": "dificil",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "marzo,abril",
+      "meses_cosecha": "julio,agosto,septiembre,octubre",
+      "dias_germinacion": 12,
+      "dias_cosecha": 110
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 14,
+    "fields": {
+      "nombre": "Rábano",
+      "nombre_cientifico": "Raphanus sativus",
+      "descripcion": "Raíz de cultivo muy rápido, ideal para principiantes y para cultivar entre hileras de otras hortalizas.",
+      "dificultad": "facil",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "marzo,abril,mayo,septiembre,octubre",
+      "meses_cosecha": "abril,mayo,junio,octubre,noviembre",
+      "dias_germinacion": 5,
+      "dias_cosecha": 30
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 15,
+    "fields": {
+      "nombre": "Fresa",
+      "nombre_cientifico": "Fragaria × ananassa",
+      "descripcion": "Fruto rojo de cultivo perenne. Se puede plantar en jardineras y macetas, ideal para balcón.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "septiembre,octubre,febrero,marzo",
+      "meses_cosecha": "abril,mayo,junio",
+      "dias_germinacion": 21,
+      "dias_cosecha": 90
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 16,
+    "fields": {
+      "nombre": "Maíz",
+      "nombre_cientifico": "Zea mays",
+      "descripcion": "Cereal de gran porte. Se planta en bloques para asegurar la polinización por viento.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "alto",
+      "meses_siembra": "abril,mayo,junio",
+      "meses_cosecha": "agosto,septiembre,octubre",
+      "dias_germinacion": 7,
+      "dias_cosecha": 100
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 17,
+    "fields": {
+      "nombre": "Manzano",
+      "nombre_cientifico": "Malus domestica",
+      "descripcion": "Árbol frutal de hoja caduca. Necesita un periodo de frío invernal para fructificar correctamente.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "noviembre,diciembre,enero,febrero",
+      "meses_cosecha": "agosto,septiembre,octubre",
+      "dias_germinacion": 365,
+      "dias_cosecha": 1095
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 18,
+    "fields": {
+      "nombre": "Uva",
+      "nombre_cientifico": "Vitis vinifera",
+      "descripcion": "Liana frutal de larga vida. Existen variedades de mesa y de vinificación.",
+      "dificultad": "dificil",
+      "exposicion": "sol",
+      "riego": "bajo",
+      "meses_siembra": "noviembre,diciembre,enero,febrero",
+      "meses_cosecha": "agosto,septiembre,octubre",
+      "dias_germinacion": 365,
+      "dias_cosecha": 1095
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 19,
+    "fields": {
+      "nombre": "Melocotonero",
+      "nombre_cientifico": "Prunus persica",
+      "descripcion": "Árbol frutal de hoja caduca. Sensible a heladas tardías durante la floración.",
+      "dificultad": "media",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "diciembre,enero,febrero",
+      "meses_cosecha": "junio,julio,agosto",
+      "dias_germinacion": 365,
+      "dias_cosecha": 1095
+    }
+  },
+  {
+    "model": "huertosmart.cultivo",
+    "pk": 20,
+    "fields": {
+      "nombre": "Albahaca",
+      "nombre_cientifico": "Ocimum basilicum",
+      "descripcion": "Aromática anual muy popular. Compañera ideal del tomate, ahuyenta plagas.",
+      "dificultad": "facil",
+      "exposicion": "sol",
+      "riego": "medio",
+      "meses_siembra": "abril,mayo,junio",
+      "meses_cosecha": "junio,julio,agosto,septiembre",
+      "dias_germinacion": 8,
+      "dias_cosecha": 75
+    }
+  }
+]

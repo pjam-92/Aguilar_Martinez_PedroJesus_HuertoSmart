@@ -1,0 +1,38 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# Variables de entorno y secretos
+.env
+.env.local
+*.pem
+
+# Modelos de IA descargados (pesan mucho, se descargan automáticamente)
+ml_models/
+
+# Credenciales AWS
+.aws/
+credentials
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

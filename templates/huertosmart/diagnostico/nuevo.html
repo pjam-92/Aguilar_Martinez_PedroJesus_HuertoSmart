@@ -1,0 +1,135 @@
+{% extends 'huertosmart/base.html' %}
+
+{% block title %}Diagnóstico IA · HuertoSmart{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-2" style="color:white; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">🔬 Diagnóstico IA</h1>
+        <p style="color:#e0e0e0; text-shadow: 0 1px 6px rgba(0,0,0,0.9);">Sube una foto clara de la hoja de tu planta y nuestro sistema de visión por computador detectará posibles enfermedades.</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        <div class="bg-gradient-to-r from-verde-oscuro to-verde-medio p-6">
+            <h2 class="text-xl font-bold text-white">📷 Subir imagen</h2>
+            <p class="text-verde-suave text-sm mt-1">Formatos admitidos: JPG, PNG, WEBP. Tamaño máximo: 10 MB.</p>
+        </div>
+
+        <div class="p-8">
+            <form method="post" enctype="multipart/form-data" id="form-diagnostico">
+                {% csrf_token %}
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-verde-oscuro mb-2">Foto de la hoja <span class="text-red-500">*</span></label>
+                    <div id="zona-drop"
+                         class="border-2 border-dashed border-verde-medio rounded-lg p-8 text-center cursor-pointer hover:bg-verde-suave/30 transition"
+                         onclick="document.getElementById('input-imagen').click()">
+                        <p class="text-4xl mb-3">🌿</p>
+                        <p class="text-gray-600 font-semibold">Haz clic o arrastra una imagen aquí</p>
+                        <p class="text-gray-400 text-sm mt-1">La imagen debe mostrar claramente la hoja</p>
+                        <p id="nombre-archivo" class="text-verde-medio font-semibold mt-3 hidden"></p>
+                    </div>
+                    <input type="file" id="input-imagen" name="imagen" accept="image/*" class="hidden" required>
+                </div>
+
+                {% if huertos %}
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-verde-oscuro mb-2">Vincular a una siembra (opcional)</label>
+                    <select name="siembra" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio bg-white">
+                        <option value="">— No vincular —</option>
+                        {% for huerto in huertos %}
+                            <optgroup label="{{ huerto.nombre }}">
+                                {% for siembra in huerto.siembras.all %}
+                                    <option value="{{ siembra.id }}">{{ siembra.cultivo.nombre }} ({{ siembra.fecha_siembra|date:"d/m/Y" }})</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-verde-oscuro mb-2">Notas adicionales (opcional)</label>
+                    <textarea name="notas" rows="2"
+                        placeholder="Síntomas que has observado, desde cuándo..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio"></textarea>
+                </div>
+
+                <button type="submit" id="btn-analizar"
+                    class="w-full bg-verde-medio hover:bg-verde-oscuro text-white font-bold py-4 rounded-lg transition text-lg">
+                    🔬 Analizar imagen
+                </button>
+
+                <div id="cargando" class="hidden mt-4 text-center">
+                    <p class="text-verde-oscuro font-semibold animate-pulse">⏳ Analizando imagen con IA... puede tardar unos segundos.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="bg-white border border-tierra-claro rounded-lg p-4 text-sm text-gray-700">
+        <p class="font-semibold text-tierra-oscuro mb-2">💡 Consejos para mejores resultados</p>
+        <ul class="space-y-1 list-disc list-inside">
+            <li>Fotografía una sola hoja con buena iluminación natural.</li>
+            <li>Fondo limpio o neutro (no mezcles varias plantas en la misma foto).</li>
+            <li>El modelo está entrenado con el dataset PlantVillage: funciona mejor con tomate, patata, manzano, fresa y pimiento.</li>
+            <li>Los resultados son orientativos. Consulta siempre con un especialista ante dudas graves.</li>
+            <li><strong>Plantas reconocidas:</strong> tomate, patata, manzano, fresa, uva, maíz, pimiento, cerezo, melocotón, naranja, frambueso, soja, arándano y calabacín. Otras especies pueden dar resultados incorrectos.</li>
+        </ul>
+    </div>
+
+    {% if request.user.diagnosticos.exists %}
+    <div class="mt-6 text-center">
+        <a href="{% url 'huertosmart:diagnostico_historial' %}" class="text-sm font-semibold" style="color:white; text-shadow: 0 1px 6px rgba(0,0,0,0.9);">
+            Ver mi historial de diagnósticos →
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+    const input = document.getElementById('input-imagen');
+    const nombreArchivo = document.getElementById('nombre-archivo');
+    const zonaDrop = document.getElementById('zona-drop');
+    const form = document.getElementById('form-diagnostico');
+    const btnAnalizar = document.getElementById('btn-analizar');
+    const cargando = document.getElementById('cargando');
+
+    input.addEventListener('change', () => {
+        if (input.files.length > 0) {
+            nombreArchivo.textContent = '✅ ' + input.files[0].name;
+            nombreArchivo.classList.remove('hidden');
+        }
+    });
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evento => {
+        zonaDrop.addEventListener(evento, e => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+
+    zonaDrop.addEventListener('dragover', () => zonaDrop.classList.add('bg-verde-suave'));
+    zonaDrop.addEventListener('dragleave', () => zonaDrop.classList.remove('bg-verde-suave'));
+
+    zonaDrop.addEventListener('drop', e => {
+        zonaDrop.classList.remove('bg-verde-suave');
+        const archivo = e.dataTransfer.files[0];
+        if (archivo) {
+            const dt = new DataTransfer();
+            dt.items.add(archivo);
+            input.files = dt.files;
+            nombreArchivo.textContent = '✅ ' + archivo.name;
+            nombreArchivo.classList.remove('hidden');
+        }
+    });
+
+    form.addEventListener('submit', () => {
+        btnAnalizar.disabled = true;
+        btnAnalizar.textContent = 'Analizando...';
+        cargando.classList.remove('hidden');
+    });
+</script>
+{% endblock %}
