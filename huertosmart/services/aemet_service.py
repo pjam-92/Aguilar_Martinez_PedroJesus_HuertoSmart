@@ -1,35 +1,55 @@
+# aemet_service.py — Servicio meteorológico con la API OpenData de AEMET
 """
-Servicio de meteorología usando la API OpenData de AEMET.
+Este archivo implementa la conexión con la API OpenData de AEMET
+(Agencia Estatal de Meteorología de España) para obtener la previsión
+meteorológica de la zona donde está ubicado cada huerto.
 
-Flujo:
-1. A partir del código postal se busca el municipio en la lista oficial de AEMET.
-2. Se consulta la predicción diaria para ese municipio.
-3. Se analizan los datos y se generan alertas si se detectan condiciones de riesgo.
+Flujo completo del servicio:
+1. A partir del código postal del huerto, buscamos el municipio AEMET más cercano.
+2. Consultamos la predicción diaria a 7 días para ese municipio.
+3. Analizamos los datos y generamos alertas si detectamos condiciones
+   de riesgo para el huerto (heladas, calor extremo, lluvia intensa, viento fuerte).
 
-Las alertas cubren: heladas, olas de calor, lluvia intensa y viento fuerte.
+La API de AEMET es gratuita pero requiere registro para obtener una API key.
+Funciona en dos pasos: primero se obtiene una URL de datos, luego se descarga
+el JSON desde esa URL. Este diseño en dos pasos es propio de AEMET.
+
+Este servicio se llama desde views.py en la vista detalle_huerto,
+dentro de un try/except para que si falla no derribe la página.
 """
+
 import os
 import json
 import logging
 import urllib.request
 import urllib.error
 
+
 logger = logging.getLogger(__name__)
 
+# URL base de la API OpenData de AEMET
 BASE_URL = 'https://opendata.aemet.es/opendata/api'
 
-# Umbrales para generar alertas
+# UMBRALES DE ALERTA — valores a partir de los cuales se genera una alerta para el huerto
 UMBRAL_HELADA = 2        # °C — temperatura mínima bajo la que hay riesgo de helada
 UMBRAL_CALOR = 35        # °C — temperatura máxima sobre la que hay riesgo de golpe de calor
 UMBRAL_LLUVIA = 30       # mm — precipitación diaria que se considera intensa
 UMBRAL_VIENTO = 50       # km/h — viento que puede dañar plantas
 
 
+
+# FUNCIONES INTERNAS DE COMUNICACIÓN CON LA API
+
 def _get(url):
-    """Realiza una petición GET a la API de AEMET y devuelve el JSON."""
+    """Realiza una petición GET autenticada a la API de AEMET y devuelve el JSON.
+
+    Añade automáticamente la API key como parámetro en la URL.
+    Devuelve None si la petición falla.
+    """
     api_key = os.getenv('AEMET_API_KEY', '')
     separador = '&' if '?' in url else '?'
     url_completa = f"{url}{separador}api_key={api_key}"
+
 
     try:
         req = urllib.request.Request(url_completa, headers={'Accept': 'application/json'})
@@ -41,7 +61,12 @@ def _get(url):
 
 
 def _get_datos(url_datos):
-    """Descarga el JSON de datos desde la URL secundaria que devuelve AEMET."""
+    """Descarga el JSON de datos desde la URL secundaria que devuelve AEMET.
+
+    La API de AEMET funciona en dos pasos: la primera llamada devuelve una URL
+    donde están los datos reales. Esta función descarga esos datos.
+    Usa latin-1 porque AEMET devuelve caracteres con ese encoding.
+    """
     try:
         req = urllib.request.Request(url_datos, headers={'Accept': 'application/json'})
         with urllib.request.urlopen(req, timeout=10) as resp:
@@ -51,12 +76,15 @@ def _get_datos(url_datos):
         return None
 
 
-def buscar_municipio_por_cp(codigo_postal):
-    """Busca el ID de municipio AEMET más cercano a un código postal.
 
-    AEMET no tiene endpoint directo por CP, así que usamos los primeros
-    dos dígitos (provincia) para filtrar la lista de municipios y buscamos
-    el que tenga el CP más parecido en su código INE.
+# FUNCIÓN DE BÚSQUEDA DE MUNICIPIO
+
+def buscar_municipio_por_cp(codigo_postal):
+    """Busca el ID de municipio AEMET más cercano a un código postal dado.
+
+    AEMET no tiene endpoint directo por código postal, así que usamos los primeros
+    dos dígitos (código de provincia) para filtrar la lista completa de municipios
+    y devolvemos el primero de esa provincia como aproximación.
 
     Returns:
         str: ID de municipio AEMET (ej. '30030') o None si no se encuentra.
@@ -64,6 +92,7 @@ def buscar_municipio_por_cp(codigo_postal):
     if not codigo_postal or len(codigo_postal) < 2:
         return None
 
+    # Obtenemos la lista completa de municipios de España
     resultado = _get(f"{BASE_URL}/maestro/municipios")
     if not resultado or resultado.get('estado') != 200:
         return None
@@ -76,28 +105,32 @@ def buscar_municipio_por_cp(codigo_postal):
     if not municipios:
         return None
 
-    # Los IDs de municipio en AEMET tienen formato "id" con el código INE
+
     # Los primeros dos dígitos del CP corresponden a la provincia
     provincia = codigo_postal[:2]
 
+    # Filtramos los municipios de esa provincia por su código INE
     candidatos = [
         m for m in municipios
         if m.get('id', '').replace('id', '')[:2] == provincia
     ]
 
+
     if not candidatos:
-        # Si no hay candidatos de la provincia, devolvemos el primero de España
         return municipios[0].get('id', '').replace('id', '') if municipios else None
 
-    # Devolvemos el primer municipio de la provincia como aproximación
+    # Devolvemos el primer municipio de la provincia como aproximación al CP
     return candidatos[0].get('id', '').replace('id', '')
 
 
+# FUNCIÓN DE OBTENCIÓN DE PREDICCIÓN
+
 def obtener_prediccion(id_municipio):
-    """Obtiene la predicción diaria para un municipio AEMET.
+    """Obtiene la predicción diaria a 7 días para un municipio AEMET.
 
     Returns:
-        list: Lista de dicts con datos por día, o lista vacía si falla.
+        list: Lista de dicts con los datos meteorológicos de cada día,
+              o lista vacía si la consulta falla.
     """
     resultado = _get(f"{BASE_URL}/prediccion/especifica/municipio/diaria/{id_municipio}")
     if not resultado or resultado.get('estado') != 200:
@@ -112,12 +145,14 @@ def obtener_prediccion(id_municipio):
         return []
 
     try:
+        # La predicción está anidada dentro de la estructura JSON de AEMET
         prediccion = datos[0]['prediccion']['dia']
         dias = []
-        for dia in prediccion[:7]:
-            fecha = dia.get('fecha', '')[:10]
 
-            # Temperatura
+        for dia in prediccion[:7]:   # Tomamos solo los 7 primeros días
+            fecha = dia.get('fecha', '')[:10]   # Solo la parte de fecha (YYYY-MM-DD)
+
+            # Temperatura máxima y mínima del día
             temp_max = None
             temp_min = None
             temps = dia.get('temperatura', {})
@@ -125,7 +160,7 @@ def obtener_prediccion(id_municipio):
                 temp_max = temps.get('maxima')
                 temp_min = temps.get('minima')
 
-            # Precipitación (tomamos el valor máximo del día)
+            # Precipitación: tomamos el valor máximo de todos los periodos del día
             lluvia = 0
             precips = dia.get('precipitacion', [])
             if isinstance(precips, list):
@@ -136,7 +171,8 @@ def obtener_prediccion(id_municipio):
                     except (ValueError, TypeError):
                         lluvia = 0
 
-            # Viento (velocidad máxima del día)
+
+            # Viento: velocidad máxima del día entre todos los periodos
             viento = 0
             vientos = dia.get('viento', [])
             if isinstance(vientos, list):
@@ -147,7 +183,7 @@ def obtener_prediccion(id_municipio):
                     except (ValueError, TypeError):
                         viento = 0
 
-            # Estado del cielo (descripción)
+            # Estado del cielo: descripción del primer periodo del día
             cielo = ''
             cielos = dia.get('estadoCielo', [])
             if isinstance(cielos, list) and cielos:
@@ -163,16 +199,23 @@ def obtener_prediccion(id_municipio):
             })
 
         return dias
+
     except (KeyError, IndexError, TypeError) as e:
         logger.warning(f"Error parseando predicción AEMET: {e}")
         return []
 
 
+# FUNCIÓN DE DETECCIÓN DE ALERTAS
+
 def detectar_alertas(dias):
     """Analiza los días de predicción y genera alertas de riesgo para el huerto.
 
+    Compara los valores meteorológicos con los umbrales definidos al inicio
+    del archivo y genera una alerta por cada condición de riesgo detectada.
+
     Returns:
-        list: Lista de dicts con 'tipo', 'mensaje', 'fecha' y 'nivel' (warning/danger).
+        list: Lista de dicts con 'tipo', 'icono', 'mensaje', 'fecha' y 'nivel'.
+              'nivel' puede ser 'warning' (precaución) o 'danger' (peligro).
     """
     alertas = []
 
@@ -184,6 +227,7 @@ def detectar_alertas(dias):
         viento = dia.get('viento', 0)
 
         try:
+            # Alerta de helada — nivel danger porque puede matar las plantas
             if temp_min is not None and float(temp_min) <= UMBRAL_HELADA:
                 alertas.append({
                     'tipo': 'helada',
@@ -193,6 +237,7 @@ def detectar_alertas(dias):
                     'nivel': 'danger',
                 })
 
+            # Alerta de calor extremo — nivel warning, riesgo de estrés hídrico
             if temp_max is not None and float(temp_max) >= UMBRAL_CALOR:
                 alertas.append({
                     'tipo': 'calor',
@@ -202,6 +247,7 @@ def detectar_alertas(dias):
                     'nivel': 'warning',
                 })
 
+            # Alerta de lluvia intensa — puede causar encharcamiento o erosión
             if lluvia and float(lluvia) >= UMBRAL_LLUVIA:
                 alertas.append({
                     'tipo': 'lluvia',
@@ -211,6 +257,7 @@ def detectar_alertas(dias):
                     'nivel': 'warning',
                 })
 
+            # Alerta de viento fuerte — puede dañar plantas frágiles o tutores
             if viento and float(viento) >= UMBRAL_VIENTO:
                 alertas.append({
                     'tipo': 'viento',
@@ -221,17 +268,24 @@ def detectar_alertas(dias):
                 })
 
         except (ValueError, TypeError):
+            # Si un valor no se puede convertir a float, ignoramos ese día
             continue
 
     return alertas
 
 
+# FUNCIÓN PRINCIPAL DEL SERVICIO
+
 def get_alertas_huerto(codigo_postal):
-    """Función principal: dado un CP devuelve predicción y alertas.
+    """Función principal: dado un código postal devuelve predicción y alertas.
+
+    Esta es la única función que llama views.py. Internamente coordina
+    la búsqueda del municipio, la obtención de la predicción y la detección
+    de alertas.
 
     Returns:
-        dict con 'prediccion' (list), 'alertas' (list) y 'municipio_id' (str).
-        Si falla, devuelve prediccion y alertas vacías.
+        dict con 'prediccion' (list de días), 'alertas' (list de alertas)
+        y 'municipio_id' (str). Si cualquier paso falla, devuelve listas vacías.
     """
     municipio_id = buscar_municipio_por_cp(codigo_postal)
     if not municipio_id:

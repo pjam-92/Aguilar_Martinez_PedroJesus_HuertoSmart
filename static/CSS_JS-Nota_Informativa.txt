@@ -1,0 +1,12 @@
+CSS y JS vacíos — Nota informativa
+
+Las carpetas css/ y js/ están vacías intencionadamente.
+
+Este proyecto utiliza Tailwind CSS cargado directamente desde CDN
+en el archivo base.html, por lo que no requiere archivos CSS propios.
+
+El JavaScript del proyecto está integrado directamente en los templates
+HTML donde se necesita, sin archivos .js separados.
+
+Si en el futuro se añadieran estilos personalizados o scripts externos,
+deberían colocarse en estas carpetas respectivamente.

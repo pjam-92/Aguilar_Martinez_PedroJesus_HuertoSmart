@@ -1,12 +1,32 @@
+# forms.py — Formularios de HuertoSmart
 """
-Formularios de Django para HuertoSmart.
+Este archivo define los formularios Django del proyecto. Un formulario en Django
+es una clase Python que se encarga de tres cosas:
+1. Generar el HTML del formulario automáticamente.
+2. Validar los datos que envía el usuario.
+3. Limpiar y preparar los datos para guardarlos en la base de datos.
+
+Hay dos tipos de formularios en Django:
+- forms.Form: formulario genérico, no vinculado a ningún modelo.
+- forms.ModelForm: formulario vinculado a un modelo, genera los campos
+  automáticamente a partir de los campos del modelo.
+
+En este proyecto se usan ambos tipos.
 """
+
 from django import forms
 from .models import Cultivo, Huerto, Siembra
 
 
-# FILTRO DE CULTIVOS
 
+# ESTILOS CSS COMPARTIDOS
+# Clases de Tailwind CSS reutilizadas en todos los widgets para mantener coherencia visual
+
+CSS_INPUT = 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio'
+CSS_SELECT = 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio bg-white'
+
+
+# Lista de meses del año para el filtro de mes de siembra
 MESES_CHOICES = [
     ('', 'Cualquier mes'),
     ('enero', 'Enero'), ('febrero', 'Febrero'), ('marzo', 'Marzo'),
@@ -15,12 +35,13 @@ MESES_CHOICES = [
     ('octubre', 'Octubre'), ('noviembre', 'Noviembre'), ('diciembre', 'Diciembre'),
 ]
 
-CSS_INPUT = 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio'
-CSS_SELECT = 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio bg-white'
 
+# FORMULARIO DE FILTRO DE CULTIVOS
+# Hereda de forms.Form (no de ModelForm) porque no guarda datos en la base de datos
 
 class CultivoFilterForm(forms.Form):
     """Formulario de filtros para la biblioteca de cultivos (método GET)."""
+
 
     busqueda = forms.CharField(
         required=False, label='Buscar',
@@ -29,11 +50,15 @@ class CultivoFilterForm(forms.Form):
             'class': CSS_INPUT,
         })
     )
+
+
     dificultad = forms.ChoiceField(
         required=False, label='Dificultad',
         choices=[('', 'Todas')] + Cultivo.DIFICULTAD_CHOICES,
         widget=forms.Select(attrs={'class': CSS_SELECT})
     )
+
+
     exposicion = forms.ChoiceField(
         required=False, label='Exposición',
         choices=[('', 'Todas')] + Cultivo.EXPOSICION_CHOICES,
@@ -51,13 +76,16 @@ class CultivoFilterForm(forms.Form):
     )
 
 
-# FORMULARIOS DEL HUERTO
+
+# FORMULARIO DE CREACIÓN DE HUERTO
 
 class HuertoForm(forms.ModelForm):
     """Formulario para crear o editar un huerto."""
 
+
     class Meta:
         model = Huerto
+        # Solo mostramos estos campos — el usuario y el slug los gestiona el sistema
         fields = ['nombre', 'ubicacion', 'municipio', 'codigo_postal', 'superficie_m2']
         labels = {
             'nombre': 'Nombre del huerto',
@@ -87,11 +115,15 @@ class HuertoForm(forms.ModelForm):
         }
 
 
+
+# FORMULARIO DE NUEVA SIEMBRA
+
 class SiembraForm(forms.ModelForm):
     """Formulario para registrar una nueva siembra en un huerto."""
 
     class Meta:
         model = Siembra
+        # El campo huerto no se incluye — se asigna automáticamente en la vista
         fields = ['cultivo', 'fecha_siembra', 'fecha_cosecha_estimada', 'cantidad', 'estado', 'notas']
         labels = {
             'cultivo': 'Cultivo',
@@ -113,3 +145,4 @@ class SiembraForm(forms.ModelForm):
                 'class': CSS_INPUT,
             }),
         }
+
