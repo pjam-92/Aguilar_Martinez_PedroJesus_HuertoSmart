@@ -15,13 +15,32 @@ miproyectodjango/urls.py.
 from django.urls import path
 from . import views
 
+"""¡! Explicación (from . import views): El punto (.) hace referencia al paquete
+actual, es decir, la carpeta huertosmart/. Esta importación relativa es la forma
+estándar de importar vistas dentro de la misma app en Django."""
 
 # app_name define el espacio de nombres de esta app
 # Permite referenciar las URLs como 'huertosmart:home', 'huertosmart:lista_cultivos', etc.
 app_name = 'huertosmart'
 
+"""¡! Explicación (app_name y namespaces): Al definir app_name, todas las URLs
+de esta lista quedan agrupadas bajo el espacio de nombres 'huertosmart'. Esto
+permite usar nombres como 'huertosmart:lista_cultivos' en lugar de solo
+'lista_cultivos', evitando conflictos si hubiera otra app con URLs del mismo nombre.
+En los templates se usa con {% url 'huertosmart:lista_cultivos' %}."""
 
+"""¡! Explicación (parámetros dinámicos en URLs): Las partes entre < > en las
+URLs son parámetros dinámicos que Django captura y pasa a la vista:
+- <slug:cultivo_slug>: solo acepta letras, números y guiones. Ej: /cultivos/tomate/
+- <int:diagnostico_id>: solo acepta números enteros. Ej: /diagnostico/5/
+- <slug:huerto_slug>: igual que el primero. Ej: /mi-huerto/mi-primer-huerto-1/
+Django valida automáticamente el tipo antes de llamar a la vista."""
 
+"""¡! Explicación (name en cada path): El parámetro name asigna un nombre a cada
+URL. Esto permite referenciarla desde el código o los templates sin escribir la
+URL completa. Por ejemplo, redirect('huertosmart:lista_cultivos') o
+{% url 'huertosmart:detalle_huerto' huerto_slug=huerto.slug %}. Si la URL cambia,
+solo hay que actualizarla aquí y el resto del código sigue funcionando."""
 
 urlpatterns = [
 

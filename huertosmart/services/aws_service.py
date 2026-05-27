@@ -27,6 +27,9 @@ try:
 except ImportError:
     BOTO3_DISPONIBLE = False
 
+"""¡! Explicación (boto3): boto3 es la librería oficial de Python para interactuar
+con todos los servicios de AWS. ClientError es la excepción que lanza boto3
+cuando AWS devuelve un error (credenciales inválidas, límite superado, etc.)."""
 
 try:
     from PIL import Image as PILImage
@@ -54,6 +57,11 @@ def convertir_a_jpeg(imagen_bytes):
     except Exception:
         return imagen_bytes
 
+"""¡! Explicación (convertir_a_jpeg): Los usuarios pueden subir imágenes en
+cualquier formato: JPG, PNG, WEBP, HEIC, etc. AWS Rekognition solo acepta
+JPEG y PNG. Esta función convierte cualquier formato a JPEG usando Pillow
+antes de enviar la imagen a AWS. Si la conversión falla, devuelve la imagen
+original y dejamos que AWS decida si puede procesarla."""
 
 
 class AWSService:
@@ -66,6 +74,10 @@ class AWSService:
 
         self.region_rekognition = os.getenv('AWS_REKOGNITION_REGION', 'eu-west-1')
 
+        """¡! Explicación (os.getenv): Lee variables del archivo .env que fueron
+        cargadas al arrancar Django gracias a python-dotenv. Si la variable no
+        existe, usa el valor por defecto indicado (en este caso 'eu-west-1',
+        la región de Irlanda). Las credenciales nunca se escriben en el código."""
 
         # Creamos el cliente de Rekognition con las credenciales del entorno
         self.rekognition_client = boto3.client(
@@ -96,6 +108,10 @@ class AWSService:
                 MinConfidence=umbral_confianza,  # Solo etiquetas con más del 70% de confianza
             )
 
+            """¡! Explicación (detect_labels): Este método de Rekognition analiza
+            la imagen y devuelve una lista de etiquetas en inglés con su porcentaje
+            de confianza. Por ejemplo, para una foto de un tomate podría devolver:
+            [{'Name': 'Plant', 'Confidence': 98.5}, {'Name': 'Tomato', 'Confidence': 94.2}, ...]"""
 
             # Etiquetas que consideramos indicativas de que hay una planta en la imagen
             etiquetas_objetivo = {'Leaf', 'Plant', 'Vegetation', 'Flower', 'Tree', 'Herb'}
@@ -111,6 +127,10 @@ class AWSService:
                 for label in response['Labels']
             )
 
+            """¡! Explicación (any()): La función any() devuelve True si al menos
+            uno de los elementos del iterable es verdadero. Aquí comprobamos si
+            alguna de las etiquetas devueltas por Rekognition está en el conjunto
+            etiquetas_objetivo. Es más eficiente que un bucle for con un if."""
 
             mensaje = (
                 "Imagen válida: contiene elementos vegetales."
@@ -132,6 +152,10 @@ class AWSService:
                 'mensaje': 'Validación previa no disponible.',
             }
 
+        """¡! Explicación (fallback en ClientError): Si AWS devuelve un error
+        (credenciales inválidas, límite de peticiones superado, sin conexión),
+        en lugar de mostrar un error al usuario devolvemos es_planta=True para
+        que el diagnóstico continúe igualmente sin la validación de Rekognition."""
 
 
 # PATRÓN SINGLETON — Una sola instancia del cliente AWS para toda la aplicación

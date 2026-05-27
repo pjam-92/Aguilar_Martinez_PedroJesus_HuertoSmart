@@ -20,10 +20,16 @@ encargados de hablar con la base de datos. Esto se llama Patrón Repository.
 import io
 import logging
 
+"""¡! Explicación (import io): 'io' es una librería de Python para trabajar con
+flujos de datos en memoria (como si fuera un archivo pero en RAM). Se usa aquí
+para generar el archivo Excel sin tener que guardarlo físicamente en el disco."""
 
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 
+"""¡! Explicación (openpyxl): Es la librería que permite crear archivos Excel
+(.xlsx) desde Python. Font, PatternFill y Alignment son clases para dar formato
+a las celdas: negrita, color de fondo y alineación del texto."""
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -31,18 +37,40 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.templatetags.static import static
 
+"""¡! Explicación (imports de Django):
+- HttpResponse: permite devolver respuestas personalizadas al navegador (como el Excel).
+- render: toma una plantilla HTML y un contexto (datos) y genera la página final.
+- redirect: redirige al usuario a otra URL.
+- login_required: decorador que protege una vista — si el usuario no ha iniciado
+  sesión, lo manda al login automáticamente.
+- messages: sistema de Django para mostrar mensajes de éxito, error o aviso al usuario.
+- static: convierte una ruta relativa de archivo estático en una URL completa."""
 
 # --- Modelos propios del proyecto ---
 from .models import Siembra
 
+"""¡! Explicación (imports de modelos): Se importa Siembra porque se usa directamente
+en diagnostico_nuevo para verificar que la siembra pertenece al usuario antes de
+vincularla al diagnóstico. El resto de modelos (Cultivo, Huerto, Enfermedad,
+Diagnostico) se gestionan exclusivamente a través de sus repositorios."""
 
 # --- Formularios del proyecto ---
 from .forms import CultivoFilterForm, HuertoForm, SiembraForm
 
+"""¡! Explicación (formularios): Los formularios Django se definen en forms.py.
+Aquí se importan los tres que se usan en las vistas:
+- CultivoFilterForm: filtros de búsqueda en la biblioteca de cultivos.
+- HuertoForm: formulario para crear un nuevo huerto.
+- SiembraForm: formulario para registrar una nueva siembra."""
 
 # --- Repositorios (Patrón Repository) ---
 from .repositories import CultivoRepository, HuertoRepository, SiembraRepository, DiagnosticoRepository, EnfermedadRepository
 
+"""¡! Explicación (repositorios): Cada repositorio es una clase que contiene
+todos los métodos de acceso a la base de datos para un modelo concreto.
+Por ejemplo, CultivoRepository tiene métodos como get_all(), filtrar(), get_by_slug().
+Las vistas usan los repositorios en lugar de acceder directamente al ORM de Django.
+Esto es el Patrón Repository: separar la lógica de acceso a datos de la lógica de negocio."""
 
 # ==============================================================================
 # CONFIGURACIÓN GLOBAL DEL MÓDULO
@@ -50,10 +78,18 @@ from .repositories import CultivoRepository, HuertoRepository, SiembraRepository
 
 logger = logging.getLogger(__name__)
 
+"""¡! Explicación (logger): Sistema de registro de eventos. Cuando algo falla
+(por ejemplo, AWS no está disponible), en lugar de mostrar un error al usuario,
+se registra el problema en los logs del servidor con logger.warning() o logger.error().
+Así el sistema puede seguir funcionando aunque un servicio externo falle."""
 
 # Porcentaje mínimo de confianza que debe tener el modelo de IA para aceptar un diagnóstico
 UMBRAL_CONFIANZA_MINIMA = 50
 
+"""¡! Explicación (UMBRAL_CONFIANZA_MINIMA): Si el modelo de IA devuelve un
+resultado con menos del 50% de confianza, se rechaza el diagnóstico y se pide
+al usuario que suba una foto más clara. Está definido aquí como constante para
+que sea fácil de cambiar sin buscar el número por todo el código."""
 
 # ==============================================================================
 # MAPA DE IMÁGENES DE CULTIVOS
@@ -83,6 +119,10 @@ IMAGENES_CULTIVOS = {
     'Albahaca':     'img/cultivos/albahaca.jpg',
 }
 
+"""¡! Explicación (IMAGENES_CULTIVOS): Es un diccionario Python donde la clave
+es el nombre del cultivo (tal como está en la base de datos) y el valor es la
+ruta relativa a su imagen dentro de la carpeta static/. Se usa en la función
+auxiliar _imagen_url() para obtener la URL completa de cada imagen."""
 
 
 def _imagen_url(nombre):
@@ -91,6 +131,11 @@ def _imagen_url(nombre):
     ruta = IMAGENES_CULTIVOS.get(nombre, '')
     return static(ruta) if ruta else ''
 
+"""¡! Explicación (_imagen_url): Esta función auxiliar (el guión bajo al inicio
+indica que es de uso interno) recibe el nombre de un cultivo, busca su imagen
+en el diccionario IMAGENES_CULTIVOS y devuelve la URL completa usando static().
+La función static() de Django convierte 'img/cultivos/tomate.jpg' en la URL
+completa que el navegador puede usar para cargar la imagen."""
 
 
 # ==============================================================================
@@ -101,6 +146,10 @@ def home(request):
     """Página de inicio de HuertoSmart."""
     return render(request, 'huertosmart/home.html')
 
+"""¡! Explicación (home): La vista más simple posible. Recibe la petición y
+devuelve directamente la plantilla home.html sin ningún dato adicional. No
+necesita consultar la base de datos porque la página de inicio solo muestra
+contenido estático (el carrusel y los textos de presentación)."""
 
 
 # ==============================================================================
@@ -112,6 +161,11 @@ def lista_cultivos(request):
     """Lista filtrable de los 20 cultivos del catálogo."""
     form = CultivoFilterForm(request.GET or None)
 
+    """¡! Explicación (request.GET or None): Los filtros de búsqueda viajan en
+    la URL como parámetros GET (por ejemplo: /cultivos/?dificultad=facil).
+    Si hay parámetros, se los pasamos al formulario para que los procese.
+    Si no hay parámetros (primera visita), le pasamos None para que el
+    formulario aparezca vacío y sin errores de validación."""
 
     repo = CultivoRepository()
 
@@ -128,6 +182,10 @@ def lista_cultivos(request):
         # No hay filtros o el formulario no es válido — mostramos todos los cultivos
         cultivos = repo.get_all()
 
+    """¡! Explicación (form.cleaned_data): Cuando un formulario Django es válido,
+    los datos del usuario ya han sido validados y limpiados (sin espacios extra,
+    con el tipo de dato correcto, etc.). Se accede a ellos con cleaned_data.
+    .get() en lugar de [] evita errores si algún campo no fue rellenado."""
 
     # Construimos una lista de diccionarios con el cultivo y su URL de imagen
     cultivos_con_imagen = [
@@ -135,6 +193,11 @@ def lista_cultivos(request):
         for c in cultivos
     ]
 
+    """¡! Explicación (cultivos_con_imagen): Como las imágenes no están en la
+    base de datos sino en el diccionario IMAGENES_CULTIVOS, aquí combinamos
+    cada objeto cultivo con su URL de imagen en un diccionario. El template
+    recibirá esta lista y podrá acceder a cultivo.nombre, cultivo.dificultad
+    e imagen_url de forma sencilla."""
 
     return render(request, 'huertosmart/cultivos/lista.html', {
         'form': form,
@@ -146,6 +209,10 @@ def lista_cultivos(request):
 def detalle_cultivo(request, cultivo_slug):
     """Ficha completa de un cultivo accedida por su slug (URL amigable)."""
 
+    """¡! Explicación (slug): Un slug es una versión de un texto apta para URLs.
+    Por ejemplo, el cultivo 'Judía verde' tiene el slug 'judia-verde', lo que
+    genera la URL /cultivos/judia-verde/ en lugar de /cultivos/3/ con el ID.
+    Es más legible para el usuario y mejor para los buscadores."""
 
     repo = CultivoRepository()
     cultivo = repo.get_by_slug(cultivo_slug)
@@ -159,6 +226,10 @@ def detalle_cultivo(request, cultivo_slug):
     meses_siembra = [m.strip() for m in cultivo.meses_siembra.split(',') if m.strip()]
     meses_cosecha = [m.strip() for m in cultivo.meses_cosecha.split(',') if m.strip()]
 
+    """¡! Explicación (split y strip): .split(',') divide el texto por las comas
+    y devuelve una lista. .strip() elimina espacios en blanco al inicio y al final
+    de cada elemento. El 'if m.strip()' descarta elementos vacíos que pudieran
+    aparecer si hubiera comas extra en el texto."""
 
     return render(request, 'huertosmart/cultivos/detalle.html', {
         'cultivo': cultivo,
@@ -178,12 +249,21 @@ def detalle_cultivo(request, cultivo_slug):
 def diagnostico_nuevo(request):
     """Vista que gestiona el formulario de diagnóstico de enfermedades por foto."""
 
+    """¡! Explicación (@login_required): Este decorador de Django comprueba antes
+    de ejecutar la vista si el usuario ha iniciado sesión. Si no lo ha hecho,
+    lo redirige automáticamente a la página de login. Es la forma estándar en
+    Django de proteger páginas privadas."""
 
     if request.method != 'POST':
         # Si el usuario solo entra a ver la página (GET), mostramos el formulario vacío
         huertos = HuertoRepository().get_huertos_usuario(request.user)
         return render(request, 'huertosmart/diagnostico/nuevo.html', {'huertos': huertos})
 
+    """¡! Explicación (GET vs POST): Las peticiones HTTP tienen métodos.
+    GET: el usuario está navegando o viendo una página.
+    POST: el usuario ha enviado un formulario con datos.
+    Aquí, si no es POST, mostramos el formulario. Si es POST, procesamos
+    la imagen enviada."""
 
     # --- PASO 1: Verificar que se ha subido una imagen ---
     imagen = request.FILES.get('imagen')
@@ -191,6 +271,9 @@ def diagnostico_nuevo(request):
         messages.error(request, 'Debes seleccionar una imagen.')
         return redirect('huertosmart:diagnostico_nuevo')
 
+    """¡! Explicación (request.FILES): Los archivos subidos por el usuario llegan
+    en request.FILES, separados de los datos de texto que llegan en request.POST.
+    Si el usuario no adjuntó ninguna imagen, .get() devuelve None y mostramos error."""
 
     # Leemos los bytes de la imagen para pasarlos a AWS y al modelo de IA
     imagen_bytes = imagen.read()
@@ -209,6 +292,11 @@ def diagnostico_nuevo(request):
         # Si AWS falla, registramos el aviso pero dejamos continuar el diagnóstico
         logger.warning(f"Rekognition no disponible, se omite validación: {e}")
 
+    """¡! Explicación (try/except con AWS): El servicio de AWS Rekognition es
+    externo y puede fallar (sin conexión, credenciales caducadas, límite de
+    peticiones alcanzado). Con try/except capturamos el error, lo registramos
+    en los logs con logger.warning() y dejamos continuar. Si AWS no está
+    disponible, el diagnóstico funciona igualmente sin la validación."""
 
     # --- PASO 3: Clasificar la enfermedad con el modelo de IA (Hugging Face) ---
     try:
@@ -220,6 +308,10 @@ def diagnostico_nuevo(request):
         messages.error(request, 'El servicio de diagnóstico no está disponible en este momento.')
         return redirect('huertosmart:diagnostico_nuevo')
 
+    """¡! Explicación (modelo IA): A diferencia de AWS, si el modelo de IA falla
+    sí mostramos error al usuario porque sin él no hay diagnóstico posible.
+    El modelo MobileNetV2 analiza la imagen y devuelve el nombre de la enfermedad
+    detectada y el porcentaje de confianza."""
 
     nombre_clase = resultado_ia['nombre_clase']
     confianza = resultado_ia['confianza']
@@ -232,6 +324,12 @@ def diagnostico_nuevo(request):
     # --- PASO 5: Buscar la enfermedad en la base de datos por el nombre que devuelve el modelo ---
     enfermedad = EnfermedadRepository().buscar_por_nombre_modelo(nombre_clase)
 
+    """¡! Explicación (buscar_por_nombre_modelo): El modelo de IA devuelve el
+    nombre exacto de la clase según el dataset PlantVillage (por ejemplo:
+    'Tomato___Early_blight'). En la base de datos tenemos las enfermedades con
+    ese mismo nombre en el campo nombre_modelo. Este método busca la coincidencia.
+    Si no hay coincidencia, enfermedad será None y el diagnóstico se guarda
+    igualmente pero sin enfermedad asociada."""
 
     # --- PASO 6: Vincular el diagnóstico a una siembra si el usuario la seleccionó ---
     siembra_id = request.POST.get('siembra')
@@ -242,10 +340,17 @@ def diagnostico_nuevo(request):
         except Siembra.DoesNotExist:
             pass
 
+    """¡! Explicación (vincular siembra): El usuario puede opcionalmente asociar
+    el diagnóstico a una de sus siembras. Si lo hace, llega el ID de la siembra
+    en request.POST. Verificamos que esa siembra pertenece al usuario antes de
+    asociarla, para que nadie pueda asociar diagnósticos a siembras de otros."""
 
     # --- PASO 7: Guardar el diagnóstico en la base de datos ---
     imagen.seek(0)
 
+    """¡! Explicación (imagen.seek(0)): Cuando hicimos imagen.read() en el Paso 1,
+    el 'cursor' de lectura del archivo llegó al final. seek(0) lo devuelve al
+    principio para que Django pueda leer el archivo completo al guardarlo."""
 
     diagnostico = DiagnosticoRepository().create(
         usuario=request.user,
@@ -272,6 +377,10 @@ def diagnostico_detalle(request, diagnostico_id):
         messages.error(request, 'No tienes acceso a ese diagnóstico.')
         return redirect('huertosmart:diagnostico_historial')
 
+    """¡! Explicación (control de acceso): Esta comprobación es lógica de negocio
+    de seguridad. Si alguien intenta acceder a /diagnostico/5/ pero ese diagnóstico
+    pertenece a otro usuario, se le deniega el acceso y se le redirige. Siempre
+    hay que verificar que el recurso pertenece al usuario que lo solicita."""
 
     return render(request, 'huertosmart/diagnostico/detalle.html', {
         'diagnostico': diagnostico,
@@ -316,6 +425,10 @@ def crear_huerto(request):
         if form.is_valid():
             huerto = form.save(commit=False)
 
+            """¡! Explicación (commit=False): form.save(commit=False) crea el objeto
+            Huerto en memoria pero NO lo guarda aún en la base de datos. Esto nos
+            permite añadir datos extra (como el usuario propietario) antes de
+            guardarlo definitivamente con huerto.save()."""
 
             huerto.usuario = request.user  # Asignamos el propietario del huerto
             huerto.save()
@@ -349,6 +462,10 @@ def detalle_huerto(request, huerto_slug):
         else siembra_repo.get_siembras_huerto(huerto)
     )
 
+    """¡! Explicación (filtro por estado): El usuario puede filtrar las siembras
+    por su estado (planificada, sembrada, en crecimiento, cosechada, perdida).
+    El estado elegido llega como parámetro GET en la URL: /mi-huerto/mi-huerto/?estado=sembrada.
+    Si no hay filtro, se muestran todas las siembras del huerto."""
 
     # --- Previsión meteorológica con AEMET (Funcionalidad CE-IABD) ---
     prediccion, alertas = [], []
@@ -362,6 +479,10 @@ def detalle_huerto(request, huerto_slug):
             # Si AEMET falla, la página sigue funcionando sin la previsión
             logger.warning(f"AEMET no disponible: {e}")
 
+    """¡! Explicación (AEMET): Si el huerto tiene código postal, consultamos la
+    API de AEMET para obtener la previsión a 7 días y detectar alertas (heladas,
+    calor extremo, lluvia intensa, viento fuerte). Si el servicio no está
+    disponible, simplemente no se muestra la sección meteorológica."""
 
     return render(request, 'huertosmart/huerto/detalle.html', {
         'huerto': huerto,
@@ -393,6 +514,11 @@ def eliminar_huerto(request, huerto_slug):
         messages.success(request, f'El huerto "{nombre}" ha sido eliminado.')
         return redirect('huertosmart:mi_huerto')
 
+    """¡! Explicación (confirmación de borrado): La primera vez que el usuario
+    pulsa 'Eliminar huerto', se hace una petición GET y se muestra una página
+    de confirmación con el template confirmar_eliminar.html. Solo cuando el
+    usuario confirma en esa página se hace una petición POST y se borra el huerto.
+    Esto evita borrados accidentales."""
 
     return render(request, 'huertosmart/huerto/confirmar_eliminar.html', {'huerto': huerto})
 
@@ -436,6 +562,10 @@ def exportar_excel(request):
     wb = openpyxl.Workbook()
     wb.remove(wb.active)  # Eliminamos la hoja vacía que crea openpyxl por defecto
 
+    """¡! Explicación (openpyxl.Workbook): Un Workbook es el libro Excel completo.
+    Dentro tendrá varias hojas (Worksheets), una por cada huerto del usuario.
+    Lo creamos en memoria (sin guardarlo en disco) y al final lo volcamos a un
+    buffer de bytes para enviarlo al navegador como descarga."""
 
     # --- Estilos para las celdas de cabecera ---
     estilo_cabecera = Font(bold=True, color='FFFFFF')           # Texto blanco y negrita
@@ -453,6 +583,9 @@ def exportar_excel(request):
     for huerto in huertos:
         ws = wb.create_sheet(title=huerto.nombre[:31])
 
+        """¡! Explicación (nombre[:31]): Excel limita los nombres de las hojas
+        a 31 caracteres. Con [:31] recortamos el nombre del huerto para que
+        no supere ese límite y no dé error."""
 
         # Cabecera con nombres de columnas y estilos
         for col_idx, (nombre_col, ancho) in enumerate(columnas, start=1):
@@ -475,6 +608,10 @@ def exportar_excel(request):
                 siembra.notas,
             ]
 
+            """¡! Explicación (get_estado_display): Los estados de las siembras se
+            guardan en la base de datos con códigos cortos (ej: 'crecimiento').
+            Django genera automáticamente el método get_CAMPO_display() para
+            obtener el texto legible definido en ESTADO_CHOICES (ej: 'En crecimiento')."""
 
             for col_idx, valor in enumerate(valores, start=1):
                 celda = ws.cell(row=fila_idx, column=col_idx, value=valor)
@@ -496,6 +633,11 @@ def exportar_excel(request):
     wb.save(buffer)
     buffer.seek(0)
 
+    """¡! Explicación (BytesIO y la respuesta): En lugar de guardar el Excel en
+    disco y luego enviarlo, lo guardamos en un buffer de memoria (BytesIO).
+    Luego creamos un HttpResponse con el contenido del buffer y el tipo MIME
+    correcto para archivos Excel. El header Content-Disposition le dice al
+    navegador que debe descargarlo con el nombre indicado."""
 
     response = HttpResponse(
         buffer.getvalue(),

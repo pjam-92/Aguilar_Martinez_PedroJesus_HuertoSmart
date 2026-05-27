@@ -17,6 +17,10 @@ En este proyecto se usan ambos tipos.
 from django import forms
 from .models import Cultivo, Huerto, Siembra
 
+"""¡! Explicación (imports): Se importa el módulo forms de Django y los tres
+modelos cuyos datos necesitan formularios. Cultivo se importa solo para acceder
+a sus CHOICES (DIFICULTAD_CHOICES, EXPOSICION_CHOICES, RIEGO_CHOICES) y
+rellenar las opciones de los desplegables del filtro."""
 
 
 # ESTILOS CSS COMPARTIDOS
@@ -25,6 +29,9 @@ from .models import Cultivo, Huerto, Siembra
 CSS_INPUT = 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio'
 CSS_SELECT = 'w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-verde-medio bg-white'
 
+"""¡! Explicación (CSS_INPUT y CSS_SELECT): En lugar de repetir las clases de
+Tailwind en cada campo, las definimos una vez como constantes y las reutilizamos.
+Esto facilita cambiar el estilo de todos los formularios desde un solo punto."""
 
 # Lista de meses del año para el filtro de mes de siembra
 MESES_CHOICES = [
@@ -42,6 +49,11 @@ MESES_CHOICES = [
 class CultivoFilterForm(forms.Form):
     """Formulario de filtros para la biblioteca de cultivos (método GET)."""
 
+    """¡! Explicación (forms.Form vs ModelForm): Este formulario hereda de
+    forms.Form porque su función es filtrar resultados, no crear ni editar
+    registros en la base de datos. Los datos se envían por GET (en la URL)
+    en lugar de por POST, porque queremos que la URL sea compartible con
+    los filtros aplicados."""
 
     busqueda = forms.CharField(
         required=False, label='Buscar',
@@ -51,6 +63,9 @@ class CultivoFilterForm(forms.Form):
         })
     )
 
+    """¡! Explicación (required=False): Todos los campos del filtro son opcionales.
+    Si el usuario no rellena un campo, ese filtro simplemente no se aplica.
+    Por eso todos tienen required=False."""
 
     dificultad = forms.ChoiceField(
         required=False, label='Dificultad',
@@ -58,6 +73,9 @@ class CultivoFilterForm(forms.Form):
         widget=forms.Select(attrs={'class': CSS_SELECT})
     )
 
+    """¡! Explicación (choices en ChoiceField): Las opciones del desplegable se
+    construyen añadiendo ('', 'Todas') al inicio de la lista DIFICULTAD_CHOICES
+    del modelo. La opción vacía '' significa "sin filtro aplicado"."""
 
     exposicion = forms.ChoiceField(
         required=False, label='Exposición',
@@ -75,6 +93,10 @@ class CultivoFilterForm(forms.Form):
         widget=forms.Select(attrs={'class': CSS_SELECT})
     )
 
+    """¡! Explicación (widget): El widget define qué elemento HTML se genera
+    para cada campo. TextInput genera un <input type="text">, Select genera
+    un <select>. Con attrs podemos añadir atributos HTML como class, placeholder
+    o maxlength directamente desde Python."""
 
 
 # FORMULARIO DE CREACIÓN DE HUERTO
@@ -82,6 +104,10 @@ class CultivoFilterForm(forms.Form):
 class HuertoForm(forms.ModelForm):
     """Formulario para crear o editar un huerto."""
 
+    """¡! Explicación (ModelForm): Al heredar de ModelForm y definir el modelo
+    en la clase Meta, Django genera automáticamente los campos del formulario
+    a partir de los campos del modelo Huerto. Solo hay que indicar qué campos
+    incluir (fields) y personalizar sus widgets y etiquetas si se desea."""
 
     class Meta:
         model = Huerto
@@ -114,6 +140,10 @@ class HuertoForm(forms.ModelForm):
             }),
         }
 
+    """¡! Explicación (campos excluidos): El campo usuario no aparece en el
+    formulario porque se asigna automáticamente en la vista (huerto.usuario =
+    request.user). El slug tampoco aparece porque se genera en el método save()
+    del modelo. Nunca deben rellenarse por el usuario."""
 
 
 # FORMULARIO DE NUEVA SIEMBRA
@@ -146,3 +176,7 @@ class SiembraForm(forms.ModelForm):
             }),
         }
 
+    """¡! Explicación (DateInput con type date): Al especificar 'type': 'date'
+    en el widget, el navegador muestra un selector de fecha visual en lugar de
+    un campo de texto normal. Es una mejora de usabilidad que no requiere
+    ninguna librería externa, solo HTML5."""

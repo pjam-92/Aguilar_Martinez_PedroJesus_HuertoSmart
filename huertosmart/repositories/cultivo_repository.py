@@ -20,6 +20,11 @@ class CultivoRepository(BaseRepository):
         """Busca cultivos cuyo nombre contenga el texto dado (sin distinguir mayúsculas)."""
         return self.model.objects.filter(nombre__icontains=nombre)
 
+    """¡! Explicación (__icontains): Los lookups de Django se escriben con doble
+    guión bajo. 'icontains' significa 'contiene este texto, ignorando mayúsculas'.
+    nombre__icontains='tom' encontraría 'Tomate', 'tomate', 'TOMATE', etc.
+    Otros lookups útiles: __exact (igual exacto), __startswith (empieza por),
+    __gte (mayor o igual que), __in (está en la lista)."""
 
     def filtrar(self, busqueda=None, dificultad=None, exposicion=None,
                 riego=None, mes_siembra=None):
@@ -31,6 +36,10 @@ class CultivoRepository(BaseRepository):
         """
         queryset = self.model.objects.all()
 
+        """¡! Explicación (queryset encadenado): Empezamos con todos los cultivos
+        y vamos aplicando filtros uno a uno. Cada .filter() devuelve un nuevo
+        queryset más reducido. Django no ejecuta la consulta SQL hasta que
+        realmente se necesitan los datos (evaluación perezosa o lazy evaluation)."""
 
         if busqueda:
             from django.db.models import Q
@@ -39,6 +48,10 @@ class CultivoRepository(BaseRepository):
                 Q(nombre_cientifico__icontains=busqueda)
             )
 
+        """¡! Explicación (objeto Q): Q permite combinar condiciones con operadores
+        lógicos. Q(a) | Q(b) significa 'a O b' (OR). Q(a) & Q(b) significa
+        'a Y b' (AND). Sin Q, todos los filtros encadenados se comportan como AND.
+        Aquí buscamos cultivos cuyo nombre O nombre científico contengan el texto."""
 
         if dificultad:
             queryset = queryset.filter(dificultad=dificultad)
@@ -64,3 +77,7 @@ class CultivoRepository(BaseRepository):
         """Busca un cultivo por su slug. Devuelve None si no existe."""
         return self.model.objects.filter(slug=slug).first()
 
+    """¡! Explicación (get_by_slug): Este método fue añadido durante la fase de
+    corrección del proyecto para que la vista detalle_cultivo usara el repositorio
+    en lugar de acceder directamente al ORM. Es el mismo tipo de consulta que
+    hacía la vista, pero ahora centralizada en el repositorio."""
