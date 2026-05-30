@@ -25,12 +25,6 @@ class DiagnosticoRepository(BaseRepository):
             queryset = queryset[:limite]
         return queryset
 
-    """¡! Explicación (slicing en querysets): queryset[:limite] en Django no carga
-    todos los resultados en memoria para luego recortarlos — se traduce directamente
-    a LIMIT en SQL. Es eficiente incluso con miles de registros. El orden
-    (-fecha, con el guión para descendente) garantiza que siempre se obtienen
-    los más recientes."""
-
     def get_ultimos_diagnosticos(self, limite=10):
         """Últimos diagnósticos del sistema completo (para estadísticas globales)."""
         return self.model.objects.all().order_by('-fecha')[:limite]
@@ -42,10 +36,6 @@ class DiagnosticoRepository(BaseRepository):
             enfermedad_detectada__isnull=False
         )
 
-    """¡! Explicación (__isnull=False): Este lookup filtra registros donde el campo
-    no es nulo. enfermedad_detectada puede ser null (cuando el modelo no encontró
-    coincidencia o la confianza fue baja). isnull=False devuelve solo los que sí
-    tienen enfermedad detectada. isnull=True devolvería los que no tienen."""
 
     def fotos_validas(self, usuario):
         """Diagnósticos donde AWS Rekognition confirmó que la imagen era una planta."""

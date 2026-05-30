@@ -24,11 +24,6 @@ import logging
 import urllib.request
 import urllib.error
 
-"""¡! Explicación (urllib en lugar de requests): Usamos urllib de la librería
-estándar de Python en lugar de la librería requests porque ya está instalada
-sin necesidad de dependencias adicionales. Para llamadas sencillas como estas
-es suficiente."""
-
 logger = logging.getLogger(__name__)
 
 # URL base de la API OpenData de AEMET
@@ -39,12 +34,6 @@ UMBRAL_HELADA = 2        # °C — temperatura mínima bajo la que hay riesgo de
 UMBRAL_CALOR = 35        # °C — temperatura máxima sobre la que hay riesgo de golpe de calor
 UMBRAL_LLUVIA = 30       # mm — precipitación diaria que se considera intensa
 UMBRAL_VIENTO = 50       # km/h — viento que puede dañar plantas
-
-"""¡! Explicación (umbrales como constantes): Definir los umbrales como constantes
-al inicio del archivo permite ajustarlos fácilmente sin buscar números sueltos
-por el código. Si el agrónomo dice que las heladas son peligrosas a partir de 0°C
-en lugar de 2°C, solo hay que cambiar una línea."""
-
 
 # FUNCIONES INTERNAS DE COMUNICACIÓN CON LA API
 
@@ -58,11 +47,6 @@ def _get(url):
     separador = '&' if '?' in url else '?'
     url_completa = f"{url}{separador}api_key={api_key}"
 
-    """¡! Explicación (API key en la URL): La API de AEMET requiere autenticación
-    mediante una clave que se añade como parámetro en la URL. La clave se lee del
-    archivo .env con os.getenv() para no escribirla en el código. El separador
-    '?' o '&' se elige según si la URL ya tiene otros parámetros o no."""
-
     try:
         req = urllib.request.Request(url_completa, headers={'Accept': 'application/json'})
         with urllib.request.urlopen(req, timeout=10) as resp:
@@ -70,7 +54,6 @@ def _get(url):
     except Exception as e:
         logger.warning(f"Error AEMET GET {url}: {e}")
         return None
-
 
 def _get_datos(url_datos):
     """Descarga el JSON de datos desde la URL secundaria que devuelve AEMET.
@@ -86,13 +69,6 @@ def _get_datos(url_datos):
     except Exception as e:
         logger.warning(f"Error descargando datos AEMET: {e}")
         return None
-
-"""¡! Explicación (diseño en dos pasos de AEMET): La API de AEMET tiene un diseño
-particular. Cuando llamas a un endpoint, no devuelve los datos directamente sino
-una respuesta JSON con una URL ('datos') donde están los datos reales. Hay que
-hacer una segunda petición a esa URL para obtener la predicción. Esto es propio
-de AEMET y hay que tenerlo en cuenta al usar su API."""
-
 
 # FUNCIÓN DE BÚSQUEDA DE MUNICIPIO
 
@@ -122,11 +98,6 @@ def buscar_municipio_por_cp(codigo_postal):
     if not municipios:
         return None
 
-    """¡! Explicación (lista de municipios): AEMET proporciona un endpoint con
-    todos los municipios de España y sus IDs. Descargamos esta lista cada vez
-    porque no tenemos una base de datos local de municipios. En un proyecto
-    en producción, esta lista se cachearía para no descargarla en cada petición."""
-
     # Los primeros dos dígitos del CP corresponden a la provincia
     provincia = codigo_postal[:2]
 
@@ -136,18 +107,11 @@ def buscar_municipio_por_cp(codigo_postal):
         if m.get('id', '').replace('id', '')[:2] == provincia
     ]
 
-    """¡! Explicación (código INE y AEMET): Los IDs de municipio en AEMET tienen
-    formato 'id30030' donde 30030 es el código INE del municipio. Los primeros
-    dos dígitos del código INE corresponden a la provincia (30 = Murcia, 28 = Madrid,
-    08 = Barcelona, etc.). Los primeros dos dígitos del código postal también
-    indican la provincia, así que podemos usarlos para filtrar."""
-
     if not candidatos:
         return municipios[0].get('id', '').replace('id', '') if municipios else None
 
     # Devolvemos el primer municipio de la provincia como aproximación al CP
     return candidatos[0].get('id', '').replace('id', '')
-
 
 # FUNCIÓN DE OBTENCIÓN DE PREDICCIÓN
 
@@ -197,10 +161,6 @@ def obtener_prediccion(id_municipio):
                     except (ValueError, TypeError):
                         lluvia = 0
 
-            """¡! Explicación (precipitación por periodos): AEMET divide el día en
-            varios periodos (mañana, tarde, noche) y da la precipitación de cada uno.
-            Tomamos el máximo para saber cuál es el peor escenario del día completo."""
-
             # Viento: velocidad máxima del día entre todos los periodos
             viento = 0
             vientos = dia.get('viento', [])
@@ -232,7 +192,6 @@ def obtener_prediccion(id_municipio):
     except (KeyError, IndexError, TypeError) as e:
         logger.warning(f"Error parseando predicción AEMET: {e}")
         return []
-
 
 # FUNCIÓN DE DETECCIÓN DE ALERTAS
 
@@ -301,7 +260,6 @@ def detectar_alertas(dias):
             continue
 
     return alertas
-
 
 # FUNCIÓN PRINCIPAL DEL SERVICIO
 
