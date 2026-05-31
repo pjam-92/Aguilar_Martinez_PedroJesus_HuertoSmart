@@ -13,9 +13,7 @@ En su lugar, usan los 'repositorios' (carpeta repositories/) que son los
 encargados de hablar con la base de datos. Esto se llama Patrón Repository.
 """
 
-# ==============================================================================
 # IMPORTS — Herramientas que necesita este archivo
-# ==============================================================================
 
 import io
 import logging
@@ -38,18 +36,14 @@ from .forms import CultivoFilterForm, HuertoForm, SiembraForm
 # --- Repositorios (Patrón Repository) ---
 from .repositories import CultivoRepository, HuertoRepository, SiembraRepository, DiagnosticoRepository, EnfermedadRepository
 
-# ==============================================================================
 # CONFIGURACIÓN GLOBAL DEL MÓDULO
-# ==============================================================================
 
 logger = logging.getLogger(__name__)
 
 # Porcentaje mínimo de confianza que debe tener el modelo de IA para aceptar un diagnóstico
 UMBRAL_CONFIANZA_MINIMA = 50
 
-# ==============================================================================
 # MAPA DE IMÁGENES DE CULTIVOS
-# ==============================================================================
 
 # Diccionario que relaciona el nombre de cada cultivo con la ruta de su imagen
 IMAGENES_CULTIVOS = {
@@ -249,10 +243,8 @@ def diagnostico_historial(request):
         'diagnosticos': repo.get_diagnosticos_usuario(request.user),
     })
 
-# ==============================================================================
 # F4 — PANEL DEL HUERTO
 # Funcionalidad privada: cada usuario solo ve y gestiona sus propios huertos
-# ==============================================================================
 
 @login_required
 def mi_huerto(request):
@@ -371,10 +363,8 @@ def nueva_siembra(request, huerto_slug):
 
     return render(request, 'huertosmart/huerto/nueva_siembra.html', {'form': form, 'huerto': huerto})
 
-# ==============================================================================
 # EXPORTAR A EXCEL — Requisito Django nº 9
 # Genera un archivo .xlsx con una hoja por cada huerto del usuario
-# ==============================================================================
 
 @login_required
 def exportar_excel(request):
